@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bookings</title>
+</head>
+<body>
+    <h1>Test Drive & Inspection Bookings</h1>
+    <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+
+    <hr>
+
+    {% for booking in bookings %}
+       <div>
+        <p><strong>Car:</strong> {{ booking["year"] }} {{ booking["make"] }} {{ booking["model"] }}</p>
+        <p><strong>Type:</strong> {% if booking["booking_type"] == "test_drive" %}Test Drive{% else %}Inspection{% endif %}</p>
+        <p><strong>Name:</strong> {{ booking["name"] }}</p>
+        <p><strong>Phone:</strong> {{ booking["phone"] }}</p>
+        <p><strong>Preferred Date:</strong> {{ booking["preferred_date"] }}</p>
+        <p><strong>Notes:</strong> {{ booking["notes"] }}</p>
+        <p><strong>Requested:</strong> {{ booking["created_at"] }}</p>
+       </div>
+       <hr>
+    {% endfor %}
+</body>
+</html>

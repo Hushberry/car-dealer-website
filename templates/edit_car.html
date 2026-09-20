@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Car</title>
+</head>
+<body>
+    <h1>Edit Car</h1>
+
+    {% if photos %}
+        <p>Current Photos:</p>
+        {% for photo in photos %}
+            <img src="{{ url_for('static', filename='uploads/' + photo) }}" width="150">
+        {% endfor %}
+    {% else %}
+        <p>No photos yet</p>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token}}">
+        <label>Make:</label>
+        <input type="text" name="make" value="{{ car['make'] }}" required>
+        <br>
+        <label>Model:</label>
+        <input type="text" name="model" value="{{ car['model'] }}" required>
+        <br>
+        <label>Year:</label>
+        <input type="number" name="year" value="{{ car['year'] }}" required>
+        <br>
+        <label>Price (₦):</label>
+        <input type="number" name="price" value="{{ car['price'] }}" required>
+        <br>
+        <label>Listing Type:</label>
+        <select name="listing_type" required>
+            <option value="sale" {% if car['listing_type'] == 'sale' %}selected{% endif %}>For Sale</option>
+            <option value="rent" {% if car['listing_type'] == 'rent' %}selected{% endif %}>For Rent</option>
+            <option value="swap" {% if car['listing_type'] == 'swap' %}selected{% endif %}>For Swap</option>
+        </select>
+        <br>
+        <label>Description:</label>
+        <textarea name="description">{{ car['description'] }}</textarea>
+        <br>
+        <label>Add More Photos:</label>
+        <input type="file" name="photos" accept="image/*" multiple>
+        <br>
+        <button type="submit">Save Changes</button>
+    </form>
+
+    <br>
+    <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+</body>
+</html>

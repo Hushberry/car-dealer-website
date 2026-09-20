@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vincent's Car Dealership</title>
+</head>
+<body>
+    <h1>Available Cars</h1>
+
+    <form method="GET">
+        <label>Type:</label>
+        <select name="listing_type">
+            <option value="">All</option>
+            <option value="sale" {% if request.args.get('listing_type') == 'sale' %}selected{% endif %}>For Sale</option>
+            <option value="rent" {% if request.args.get('listing_type') == 'rent' %}selected{% endif %}>For Rent</option>
+            <option value="swap" {% if request.args.get('listing_type') == 'swap' %}selected{% endif %}>For Swap</option>
+        </select>
+
+        <label>Make:</label>
+        <input type="text" name="make" value="{{ request.args.get('make', '') }}">
+
+        <label>Min Price:</label>
+        <input type="number" name="min_price" value="{{ request.args.get('min_price', '') }}">
+
+        <label>Max Price:</label>
+        <input type="number" name="max_price" value="{{ request.args.get('max_price', '') }}">
+
+        <button type="submit">Search</button>
+        <a href="{{ url_for('home') }}">Clear</a>
+    </form>
+
+    <hr>
+{% for item in cars %}
+    {% set car = item.car %}
+    {% set photos = item.photos %}
+    <div>
+        <h3><a href="{{ url_for('car_detail', car_id=car['id']) }}">{{ car["year"] }} {{ car["make"] }} {{ car["model"] }}</a></h3>
+
+        {% if photos %}
+            {% for photo in photos %}
+                <img src="{{ url_for('static', filename='uploads/' + photo) }}" width="200">
+            {% endfor %}
+        {% else %}
+            <p>No photos available</p>
+        {% endif %}
+
+        <p>Type:
+            {% if car["listing_type"] == "sale" %}For Sale
+            {% elif car["listing_type"] == "rent" %}For Rent
+            {% elif car["listing_type"] == "swap" %}For Swap
+            {% else %}{{ car["listing_type"] }}
+            {% endif %}
+        </p>
+        <p>Price: ₦{{ "{:,}".format(car["price"]) }}</p>
+        <p>{{ car["description"] }}</p>
+    </div>
+    <hr>
+{% endfor %}
+
+</body>
+</html>

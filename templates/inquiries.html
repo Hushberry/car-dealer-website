@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inquiries</title>
+</head>
+<body>
+    <h1>Customer Inquiries</h1>
+    <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+
+    <hr>
+
+    {% for inquiry in inquiries %}
+        <div>
+            <p><strong>Car:</strong> {{ inquiry["year"] }} {{ inquiry["make"] }} {{ inquiry["model"] }}</p>
+            <p><strong>Name:</strong> {{ inquiry["name"] }}</p>
+            <p><strong>Phone:</strong> {{ inquiry["phone"] }}</p>
+            <p><strong>Message:</strong> {{ inquiry["message"] }}</p>
+            <p><strong>Received:</strong> {{ inquiry["created_at"] }}</p>
+        </div>
+        <hr>
+    {% endfor %}
+</body>
+</html>

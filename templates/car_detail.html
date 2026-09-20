@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ car["year"] }} {{ car["make"] }} {{ car["model"] }}</title>
+</head>
+
+<body>
+    <a href="{{ url_for('home') }}">← Back to all cars</a>
+
+    <h1>{{ car["year"] }} {{ car["make"] }} {{ car["model"] }}</h1>
+
+    {% if photos %}
+    {% for photo in photos %}
+    <img src="{{ url_for('static', filename='uploads/' + photo) }}" width="300">
+    {% endfor %}
+    {% else %}
+    <p>No photos available</p>
+    {% endif %}
+
+    <p>Type:
+        {% if car["listing_type"] == "sale" %}For Sale
+        {% elif car["listing_type"] == "rent" %}For Rent
+        {% elif car["listing_type"] == "swap" %}For Swap
+        {% else %}{{ car["listing_type"] }}
+        {% endif %}
+    </p>
+
+    <p>Price: ₦{{ "{:,}".format(car["price"]) }}</p>
+
+    <p>{{ car["description"] }}</p>
+
+    {% if car["sold"] == 1 %}
+    <p><strong>This car has been sold.</strong></p>
+    {% endif %}
+
+    <h2>Interested in this car?</h2>
+
+    <a href="https://wa.me/{{ +2347066108664 }}?text=Hi%2C%20I%27m%20interested%20in%20the%20{{ car['year'] }}%20{{ car['make'] }}%20{{ car['model'] }}"
+        target="_blank"
+        style="display:inline-block; background-color:#25D366; color:white; padding:10px 20px; text-decoration:none; border-radius:5px; font-weight:bold;">
+        💬 Chat on WhatsApp
+    </a>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <p style="color: green;">{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <h2>Book a Test Drive</h2>
+
+<form method="POST" action="{{ url_for('submit_booking', car_id=car['id'] )}}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Your Name:</label>
+    <input type="text" name="name" required>
+    <br>
+    <label>Your Phone Number:</label>
+    <input type="tel" name="phone" required>
+    <br>
+    <label>Booking Type:</label>
+    <select name="booking_type" required>
+        <option value="test_drive">Test Drive</option>
+        <option value="inspection">Inspection</option>
+    </select>
+    <br>
+    <label>Preferred Date:</label>
+    <input type="date" name="preferred_date" required>
+    <br>
+    <label>Notes:</label>
+    <textarea name="notes"></textarea>
+    <br>
+    <button type="submit">Request Booking</button>
+</form>
+
+    <form method="POST" action="{{ url_for('submit_inquiry', car_id=car['id']) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>Your Name:</label>
+        <input type="text" name="name" required>
+        <br>
+        <label>Your Phone Number:</label>
+        <input type="tel" name="phone" required>
+        <br>
+        <label>Message:</label>
+        <textarea name="message" placeholder="I'm interested in this car..."></textarea>
+        <br>
+        <button type="submit">Send Inquiry</button>
+    </form>
+
+
+
+</body>
+
+</html>

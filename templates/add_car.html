@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Add Car</title>
+    </head>
+    <body>
+        <h1>Add New Car</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Make:</label>
+            <input type="text" name="make" required>
+            <br>
+            <label>Model:</label>
+            <input type="text" name="model" required>
+            <br>
+            <label>Year:</label>
+            <input type="number" name="year" required>
+            <br>
+            <label>Price (₦):</label>
+            <input type="number" name="price" required>
+            <br>
+            <label>Listing Type:</label>
+            <select name="listing_type" required>
+                <option value="sale">For Sale</option>
+                <option value="rent">For Rent</option>
+                <option value="swap">For Swap</option>
+            </select>
+            <br>
+            <label>Description</label>
+            <textarea name="description"></textarea>
+            <br>
+            <label>Photos:</label>
+            <input type="file" name="photos" accept="image/*" multiple>
+            <br>
+            <button type="submit">Add Car</button>
+        </form>
+
+        <br>
+        <a href="{{ url_for('admin_dashboard')}}">Back to Dashboard</a>
+    </body>
+</html>
