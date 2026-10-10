@@ -1,51 +1,709 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Edit Car</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Edit Car — Vincent's Auto</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .page-wrap {
+            padding: 40px 48px 80px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            border: 1px solid var(--hairline);
+            padding: 28px;
+            margin-top: 28px;
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .form-section h2 {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0 0 6px;
+        }
+
+        .section-description {
+            color: var(--muted);
+            font-size: 13px;
+            margin: 0 0 24px;
+            line-height: 1.6;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            margin-bottom: 7px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .help-text {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        .existing-gallery {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 16px 0 8px;
+        }
+
+        .existing-photo {
+            width: 120px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--hairline);
+        }
+
+        .photo-section {
+            margin-top: 28px;
+        }
+
+        .photo-upload {
+            border: 1px dashed var(--hairline);
+            padding: 24px;
+            text-align: center;
+        }
+
+        .photo-upload input[type="file"] {
+            width: 100%;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .required {
+            color: #E0796E;
+        }
+
+        @media (max-width: 700px) {
+
+            .page-wrap {
+                padding: 30px 20px 60px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: auto;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions a,
+            .form-actions button {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Edit Car</h1>
 
-    {% if photos %}
-        <p>Current Photos:</p>
-        {% for photo in photos %}
-            <img src="{{ url_for('static', filename='uploads/' + photo) }}" width="150">
-        {% endfor %}
-    {% else %}
-        <p>No photos yet</p>
-    {% endif %}
+    <div class="topbar">
 
-    <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token}}">
-        <label>Make:</label>
-        <input type="text" name="make" value="{{ car['make'] }}" required>
-        <br>
-        <label>Model:</label>
-        <input type="text" name="model" value="{{ car['model'] }}" required>
-        <br>
-        <label>Year:</label>
-        <input type="number" name="year" value="{{ car['year'] }}" required>
-        <br>
-        <label>Price (₦):</label>
-        <input type="number" name="price" value="{{ car['price'] }}" required>
-        <br>
-        <label>Listing Type:</label>
-        <select name="listing_type" required>
-            <option value="sale" {% if car['listing_type'] == 'sale' %}selected{% endif %}>For Sale</option>
-            <option value="rent" {% if car['listing_type'] == 'rent' %}selected{% endif %}>For Rent</option>
-            <option value="swap" {% if car['listing_type'] == 'swap' %}selected{% endif %}>For Swap</option>
-        </select>
-        <br>
-        <label>Description:</label>
-        <textarea name="description">{{ car['description'] }}</textarea>
-        <br>
-        <label>Add More Photos:</label>
-        <input type="file" name="photos" accept="image/*" multiple>
-        <br>
-        <button type="submit">Save Changes</button>
-    </form>
+        <a href="{{ url_for('home') }}" class="brand">
+            PrimeDrive <em>Motors</em>
+        </a>
 
-    <br>
-    <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+    </div>
+
+
+    <div class="page-wrap">
+
+        <a href="{{ url_for('admin_dashboard') }}" class="back-link">← Back to Dashboard</a>
+
+
+
+        <h1 style="font-size:26px; font-weight:400; margin-top:16px;">
+            Edit Car
+        </h1>
+
+        <p style="color:var(--muted); font-size:14px; line-height:1.6;">
+            Update the vehicle information, specifications and photos below.
+        </p>
+
+
+        <!-- ==================================================
+             CURRENT PHOTOS
+        =================================================== -->
+
+        <div class="form-section">
+
+            <h2>Current Photos</h2>
+
+            <p class="section-description">
+                These photos are currently attached to this vehicle.
+            </p>
+
+            {% if photos %}
+
+            <div class="existing-gallery">
+
+                {% for photo in photos %}
+
+                <img src="{{ url_for('static', filename='uploads/' + photo) }}"
+                    alt="{{ car['make'] }} {{ car['model'] }}" class="existing-photo">
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <p class="card-meta">
+                No photos have been uploaded for this vehicle yet.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <form method="POST" enctype="multipart/form-data" class="form-block" style="max-width:none;">
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+
+            <!-- ==================================================
+                 VEHICLE INFORMATION
+            =================================================== -->
+
+            <div class="form-section">
+
+                <h2>Vehicle Information</h2>
+
+                <p class="section-description">
+                    Update the basic information and listing status.
+                </p>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Make <span class="required">*</span>
+                        </label>
+
+                        <input type="text" name="make" value="{{ car['make'] or '' }}" required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Model <span class="required">*</span>
+                        </label>
+
+                        <input type="text" name="model" value="{{ car['model'] or '' }}" required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Year <span class="required">*</span>
+                        </label>
+
+                        <input type="number" name="year" min="1900" max="2100" value="{{ car['year'] or '' }}" required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Price (₦) <span class="required">*</span>
+                        </label>
+
+                        <input type="number" name="price" min="0" value="{{ car['price'] or '' }}" required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Listing Type <span class="required">*</span>
+                        </label>
+
+                        <select name="listing_type" required>
+
+                            <option value="sale" {% if car['listing_type']=='sale' %}selected{% endif %}>
+                                For Sale
+                            </option>
+
+                            <option value="rent" {% if car['listing_type']=='rent' %}selected{% endif %}>
+                                For Rent
+                            </option>
+
+                            <option value="swap" {% if car['listing_type']=='swap' %}selected{% endif %}>
+                                For Swap
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Condition</label>
+
+                        <select name="condition">
+
+                            <option value="" {% if not car['condition'] %}selected{% endif %}>
+                                Select condition
+                            </option>
+
+                            <option value="Brand New" {% if car['condition']=='Brand New' %}selected{% endif %}>
+                                Brand New
+                            </option>
+
+                            <option value="Foreign Used" {% if car['condition']=='Foreign Used' %}selected{% endif %}>
+                                Foreign Used
+                            </option>
+
+                            <option value="Nigerian Used" {% if car['condition']=='Nigerian Used' %}selected{% endif %}>
+                                Nigerian Used
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 VEHICLE SPECIFICATIONS
+            =================================================== -->
+
+            <div class="form-section">
+
+                <h2>Vehicle Specifications</h2>
+
+                <p class="section-description">
+                    Update the mechanical and practical specifications.
+                </p>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>Transmission</label>
+
+                        <select name="transmission">
+
+                            <option value="" {% if not car['transmission'] %}selected{% endif %}>
+                                Select transmission
+                            </option>
+
+                            <option value="Automatic" {% if car['transmission']=='Automatic' %}selected{% endif %}>
+                                Automatic
+                            </option>
+
+                            <option value="Manual" {% if car['transmission']=='Manual' %}selected{% endif %}>
+                                Manual
+                            </option>
+
+                            <option value="CVT" {% if car['transmission']=='CVT' %}selected{% endif %}>
+                                CVT
+                            </option>
+
+                            <option value="DCT" {% if car['transmission']=='DCT' %}selected{% endif %}>
+                                DCT
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Mileage</label>
+
+                        <input type="text" name="mileage" value="{{ car['mileage'] or '' }}"
+                            placeholder="e.g. 145,000 km">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Fuel Type</label>
+
+                        <select name="fuel_type">
+
+                            <option value="" {% if not car['fuel_type'] %}selected{% endif %}>
+                                Select fuel type
+                            </option>
+
+                            <option value="Petrol" {% if car['fuel_type']=='Petrol' %}selected{% endif %}>
+                                Petrol
+                            </option>
+
+                            <option value="Diesel" {% if car['fuel_type']=='Diesel' %}selected{% endif %}>
+                                Diesel
+                            </option>
+
+                            <option value="Hybrid" {% if car['fuel_type']=='Hybrid' %}selected{% endif %}>
+                                Hybrid
+                            </option>
+
+                            <option value="Electric" {% if car['fuel_type']=='Electric' %}selected{% endif %}>
+                                Electric
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Body Type</label>
+
+                        <select name="body_type">
+
+                            <option value="" {% if not car['body_type'] %}selected{% endif %}>
+                                Select body type
+                            </option>
+
+                            <option value="Sedan" {% if car['body_type']=='Sedan' %}selected{% endif %}>
+                                Sedan
+                            </option>
+
+                            <option value="SUV" {% if car['body_type']=='SUV' %}selected{% endif %}>
+                                SUV
+                            </option>
+
+                            <option value="Hatchback" {% if car['body_type']=='Hatchback' %}selected{% endif %}>
+                                Hatchback
+                            </option>
+
+                            <option value="Coupe" {% if car['body_type']=='Coupe' %}selected{% endif %}>
+                                Coupe
+                            </option>
+
+                            <option value="Convertible" {% if car['body_type']=='Convertible' %}selected{% endif %}>
+                                Convertible
+                            </option>
+
+                            <option value="Wagon" {% if car['body_type']=='Wagon' %}selected{% endif %}>
+                                Wagon
+                            </option>
+
+                            <option value="Pickup" {% if car['body_type']=='Pickup' %}selected{% endif %}>
+                                Pickup
+                            </option>
+
+                            <option value="Van" {% if car['body_type']=='Van' %}selected{% endif %}>
+                                Van
+                            </option>
+
+                            <option value="Minivan" {% if car['body_type']=='Minivan' %}selected{% endif %}>
+                                Minivan
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Drive Type</label>
+
+                        <select name="drive_type">
+
+                            <option value="" {% if not car['drive_type'] %}selected{% endif %}>
+                                Select drive type
+                            </option>
+
+                            <option value="FWD" {% if car['drive_type']=='FWD' %}selected{% endif %}>
+                                Front-Wheel Drive (FWD)
+                            </option>
+
+                            <option value="RWD" {% if car['drive_type']=='RWD' %}selected{% endif %}>
+                                Rear-Wheel Drive (RWD)
+                            </option>
+
+                            <option value="AWD" {% if car['drive_type']=='AWD' %}selected{% endif %}>
+                                All-Wheel Drive (AWD)
+                            </option>
+
+                            <option value="4WD" {% if car['drive_type']=='4WD' %}selected{% endif %}>
+                                Four-Wheel Drive (4WD)
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Engine</label>
+
+                        <input type="text" name="engine" value="{{ car['engine'] or '' }}"
+                            placeholder="e.g. 1.8L Petrol">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Doors</label>
+
+                        <select name="doors">
+
+                            <option value="" {% if not car['doors'] %}selected{% endif %}>
+                                Select
+                            </option>
+
+                            {% for value in ['2', '3', '4', '5'] %}
+
+                            <option value="{{ value }}" {% if car['doors']==value %}selected{% endif %}>
+                                {{ value }}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Seats</label>
+
+                        <select name="seats">
+
+                            <option value="" {% if not car['seats'] %}selected{% endif %}>
+                                Select
+                            </option>
+
+                            {% for value in ['2', '4', '5', '6', '7', '8', '9'] %}
+
+                            <option value="{{ value }}" {% if car['seats']==value %}selected{% endif %}>
+                                {% if value == '9' %}
+                                9+
+                                {% else %}
+                                {{ value }}
+                                {% endif %}
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 APPEARANCE
+            =================================================== -->
+
+            <div class="form-section">
+
+                <h2>Appearance</h2>
+
+                <p class="section-description">
+                    Update the exterior and interior colours.
+                </p>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>Exterior Color</label>
+
+                        <input type="text" name="exterior_color" value="{{ car['exterior_color'] or '' }}"
+                            placeholder="e.g. Black">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Interior Color</label>
+
+                        <input type="text" name="interior_color" value="{{ car['interior_color'] or '' }}"
+                            placeholder="e.g. Beige">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 ADDITIONAL INFORMATION
+            =================================================== -->
+
+            <div class="form-section">
+
+                <h2>Additional Information</h2>
+
+                <p class="section-description">
+                    Update optional vehicle information and customer-facing details.
+                </p>
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>VIN / Chassis Number</label>
+
+                        <input type="text" name="vin" value="{{ car['vin'] or '' }}"
+                            placeholder="Enter VIN or chassis number">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Vehicle Location</label>
+
+                        <input type="text" name="location" value="{{ car['location'] or '' }}"
+                            placeholder="e.g. Port Harcourt">
+
+                    </div>
+
+
+                    <div class="form-group full-width">
+
+                        <label>Key Features</label>
+
+                        <textarea name="features"
+                            placeholder="e.g.&#10;Air conditioning&#10;Leather seats&#10;Reverse camera&#10;Bluetooth">{{ car['features'] or '' }}</textarea>
+
+                        <span class="help-text">
+                            Add one feature per line.
+                        </span>
+
+                    </div>
+
+
+                    <div class="form-group full-width">
+
+                        <label>Description</label>
+
+                        <textarea name="description"
+                            placeholder="Write a detailed description of the vehicle...">{{ car['description'] or '' }}</textarea>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 PHOTOS
+            =================================================== -->
+
+            <div class="form-section">
+
+                <h2>Add More Photos</h2>
+
+                <p class="section-description">
+                    Upload additional photos. Existing photos will remain attached
+                    to the vehicle.
+                </p>
+
+                <div class="photo-upload">
+
+                    <input type="file" name="photos" accept="image/*" multiple>
+
+                    <p class="help-text">
+                        Select multiple images if needed.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 ACTIONS
+            =================================================== -->
+
+            <div class="form-actions">
+
+                <a href="{{ url_for('admin_dashboard') }}" class="btn-outline"
+                    style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                    Cancel
+                </a>
+
+                <button type="submit" class="btn-gold">
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
 </body>
+
 </html>

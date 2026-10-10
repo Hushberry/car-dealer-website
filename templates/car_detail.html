@@ -1,95 +1,591 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>{{ car["year"] }} {{ car["make"] }} {{ car["model"] }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ car["year"] }} {{ car["make"] }} {{ car["model"] }} — Vincent's Auto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .back-link {
+            font-size: 13px;
+            text-decoration: none;
+            color: var(--muted);
+        }
+
+        .back-link:hover {
+            color: var(--ivory);
+        }
+
+        .detail-header {
+            margin-top: 16px;
+        }
+
+        .detail-header h1 {
+            font-size: 28px;
+            margin: 0 0 6px;
+            font-weight: 500;
+        }
+
+        .detail-meta {
+            color: var(--muted);
+            font-size: 14px;
+            margin: 0 0 8px;
+        }
+
+        .sold-banner {
+            color: #E0796E;
+            border: 1px solid rgba(224, 121, 110, 0.3);
+            background: rgba(224, 121, 110, 0.08);
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        .detail-desc {
+            color: var(--ivory);
+            font-size: 15.5px;
+            line-height: 1.7;
+            margin: 20px 0;
+        }
+
+        .detail-wrap-section {
+            margin-top: 40px;
+        }
+
+        .detail-wrap-section h2 {
+            font-size: 19px;
+            font-weight: 500;
+            margin: 0 0 4px;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--hairline);
+            margin: 40px 0;
+        }
+
+
+        /* Responsive vehicle details page */
+        html,
+        body {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            margin: 0;
+            overflow-x: clip;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        .detail-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+            gap: 24px;
+            width: 100%;
+            max-width: 1200px;
+            min-width: 0;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .detail-main,
+        .detail-sidebar {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+        }
+
+        .detail-main img {
+            max-width: 100%;
+        }
+
+        #mainPhoto {
+            display: block;
+            width: 100% !important;
+            height: auto;
+            max-height: 420px;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+        }
+
+        .thumb-strip {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            padding: 8px 0;
+        }
+
+        .thumb-strip img {
+            flex: 0 0 62px;
+            width: 62px;
+            height: 44px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            width: 100%;
+        }
+
+        .spec-item,
+        .spec-value {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .showroom-combined {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 16px;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .compact-form,
+        .map-frame {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+        }
+
+        .map-frame {
+            height: 260px;
+            overflow: hidden;
+        }
+
+        .map-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .price-card,
+        .trust-card {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+        }
+
+        .price-value {
+            overflow-wrap: anywhere;
+        }
+
+        .price-card a {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            text-align: center;
+        }
+
+        footer {
+            width: 100%;
+            max-width: 100%;
+            padding: 32px 24px !important;
+        }
+
+        .topbar,
+        .topbar-inner {
+            max-width: 100%;
+            min-width: 0;
+        }
+
+        /* Tablets and smaller screens */
+        @media (max-width: 760px) {
+            .detail-layout {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 24px;
+                padding: 16px;
+            }
+
+            .detail-sidebar {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr);
+                gap: 12px;
+                align-content: start;
+            }
+
+            .spec-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .showroom-combined {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .map-frame {
+                height: 220px;
+            }
+
+            .detail-title-big,
+            .detail-header h1 {
+                font-size: 24px;
+                overflow-wrap: anywhere;
+            }
+
+            footer {
+                padding: 28px 16px !important;
+            }
+        }
+
+        /* Very narrow mobile screens, including 322px */
+        @media (max-width: 360px) {
+            .detail-layout {
+                padding: 10px;
+                gap: 20px;
+            }
+
+            .detail-title-big,
+            .detail-header h1 {
+                font-size: 21px;
+            }
+
+            .detail-location-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px 6px;
+                font-size: 11px;
+                overflow-wrap: anywhere;
+            }
+
+            .detail-main h2,
+            .detail-wrap-section h2 {
+                font-size: 17px;
+            }
+
+            .detail-desc {
+                font-size: 14px;
+                line-height: 1.6;
+            }
+
+            .spec-grid {
+                gap: 10px;
+            }
+
+            .spec-label {
+                font-size: 10px;
+            }
+
+            .spec-value {
+                font-size: 12px;
+            }
+
+            .map-frame {
+                height: 190px;
+            }
+
+            .price-card,
+            .trust-card {
+                padding: 12px;
+            }
+
+            footer {
+                padding: 24px 12px !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <a href="{{ url_for('home') }}">← Back to all cars</a>
 
-    <h1>{{ car["year"] }} {{ car["make"] }} {{ car["model"] }}</h1>
+    <div class="topbar">
+        <div class="topbar-inner">
+            <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motors</em></a>
+            <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('home') }}#services">Services</a>
+                <a href="{{ url_for('home') }}#cars">Cars</a>
+                <a href="{{ url_for('swap_car') }}">Swap Your Car</a>
+                <a href="{{ url_for('home') }}#about">About</a>
+                <a href="{{ url_for('home') }}#gallery">Gallery</a>
+                <a href="{{ url_for('home') }}#contact">Contact</a>
+            </div>
+        </div>
+    </div>
 
-    {% if photos %}
-    {% for photo in photos %}
-    <img src="{{ url_for('static', filename='uploads/' + photo) }}" width="300">
-    {% endfor %}
-    {% else %}
-    <p>No photos available</p>
-    {% endif %}
+    <div class="detail-layout">
 
-    <p>Type:
-        {% if car["listing_type"] == "sale" %}For Sale
-        {% elif car["listing_type"] == "rent" %}For Rent
-        {% elif car["listing_type"] == "swap" %}For Swap
-        {% else %}{{ car["listing_type"] }}
-        {% endif %}
-    </p>
+        <div class="detail-main">
 
-    <p>Price: ₦{{ "{:,}".format(car["price"]) }}</p>
+            <div class="sticky-subnav">
+                <a href="{{ url_for('home') }}#cars" class="back-link">← Back to all cars</a>
+            </div>
 
-    <p>{{ car["description"] }}</p>
+            <div class="detail-top-badges">
+                {% if car["condition"] %}
+                <span class="detail-badge condition">{{ car["condition"] }}</span>
+                {% endif %}
+                {% if car["sold"] == 1 %}
+                <span class="detail-badge sold">Sold</span>
+                {% else %}
+                <span class="detail-badge available">Available Now</span>
+                {% endif %}
+            </div>
 
-    {% if car["sold"] == 1 %}
-    <p><strong>This car has been sold.</strong></p>
-    {% endif %}
+            <h1 class="detail-title-big">{{ car["year"] }} {{ car["make"] }} {{ car["model"] }}</h1>
 
-    <h2>Interested in this car?</h2>
+            <div class="detail-location-row">
+                <span>📍 {{ car["location"] if car["location"] else dealer_address }}</span>
+                <span class="sep">·</span>
+                <span>Stock ID: {{ car["id"] }}</span>
+            </div>
 
-    <a href="https://wa.me/{{ +2347066108664 }}?text=Hi%2C%20I%27m%20interested%20in%20the%20{{ car['year'] }}%20{{ car['make'] }}%20{{ car['model'] }}"
-        target="_blank"
-        style="display:inline-block; background-color:#25D366; color:white; padding:10px 20px; text-decoration:none; border-radius:5px; font-weight:bold;">
-        💬 Chat on WhatsApp
-    </a>
+            {% if photos %}
+            <img id="mainPhoto" src="{{ url_for('static', filename='uploads/' + photos[0]) }}"
+                style="width:100%; max-height:420px; object-fit:cover; border-radius:8px; border:1px solid var(--hairline); cursor:pointer;"
+                onclick="openLightbox(0)" alt="{{ car['make'] }} {{ car['model'] }}">
 
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    {% for message in messages %}
-    <p style="color: green;">{{ message }}</p>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
+            {% if photos|length > 1 %}
+            <div class="thumb-strip">
+                {% for photo in photos %}
+                <img src="{{ url_for('static', filename='uploads/' + photo) }}"
+                    class="{% if loop.index0 == 0 %}active-thumb{% endif %}"
+                    onclick="setMainPhoto(this, {{ loop.index0 }})"
+                    alt="{{ car['make'] }} {{ car['model'] }} photo {{ loop.index }}">
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% else %}
+            <p class="card-meta" style="margin-top:12px;">No photos available for this car yet.</p>
+            {% endif %}
 
-    <h2>Book a Test Drive</h2>
+            {% if car["description"] %}
+            <div>
+                <h2>Vehicle Overview</h2>
+                <p class="detail-desc">{{ car["description"] }}</p>
+            </div>
+            {% endif %}
 
-<form method="POST" action="{{ url_for('submit_booking', car_id=car['id'] )}}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <label>Your Name:</label>
-    <input type="text" name="name" required>
-    <br>
-    <label>Your Phone Number:</label>
-    <input type="tel" name="phone" required>
-    <br>
-    <label>Booking Type:</label>
-    <select name="booking_type" required>
-        <option value="test_drive">Test Drive</option>
-        <option value="inspection">Inspection</option>
-    </select>
-    <br>
-    <label>Preferred Date:</label>
-    <input type="date" name="preferred_date" required>
-    <br>
-    <label>Notes:</label>
-    <textarea name="notes"></textarea>
-    <br>
-    <button type="submit">Request Booking</button>
-</form>
+            {% set has_specs = car["condition"] or car["body_type"] or car["drive_type"] or car["exterior_color"] or
+            car["interior_color"] or car["doors"] or car["seats"] %}
+            {% if has_specs %}
+            <div class="detail-wrap-section">
+                <h2>Vehicle Details</h2>
+                <div class="spec-grid">
+                    {% if car["condition"] %}<div class="spec-item"><span class="spec-label">Condition</span><span
+                            class="spec-value">{{ car["condition"] }}</span></div>{% endif %}
+                    {% if car["body_type"] %}<div class="spec-item"><span class="spec-label">Body Type</span><span
+                            class="spec-value">{{ car["body_type"] }}</span></div>{% endif %}
+                    {% if car["drive_type"] %}<div class="spec-item"><span class="spec-label">Drive Type</span><span
+                            class="spec-value">{{ car["drive_type"] }}</span></div>{% endif %}
+                    {% if car["exterior_color"] %}<div class="spec-item"><span class="spec-label">Exterior
+                            Color</span><span class="spec-value">{{ car["exterior_color"] }}</span></div>{% endif %}
+                    {% if car["interior_color"] %}<div class="spec-item"><span class="spec-label">Interior
+                            Color</span><span class="spec-value">{{ car["interior_color"] }}</span></div>{% endif %}
+                    {% if car["doors"] %}<div class="spec-item"><span class="spec-label">Doors</span><span
+                            class="spec-value">{{ car["doors"] }}</span></div>{% endif %}
+                    {% if car["seats"] %}<div class="spec-item"><span class="spec-label">Seats</span><span
+                            class="spec-value">{{ car["seats"] }}</span></div>{% endif %}
+                </div>
+            </div>
+            {% endif %}
 
-    <form method="POST" action="{{ url_for('submit_inquiry', car_id=car['id']) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <label>Your Name:</label>
-        <input type="text" name="name" required>
-        <br>
-        <label>Your Phone Number:</label>
-        <input type="tel" name="phone" required>
-        <br>
-        <label>Message:</label>
-        <textarea name="message" placeholder="I'm interested in this car..."></textarea>
-        <br>
-        <button type="submit">Send Inquiry</button>
-    </form>
+            {% if car["features"] %}
+            <div class="detail-wrap-section">
+                <h2>Key Features</h2>
+                <ul class="features-list">
+                    {% for feature in car["features"].split(",") %}
+                    {% if feature.strip() %}<li>{{ feature.strip() }}</li>{% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
 
+            <div class="detail-wrap-section">
+                <h2>Visit Our Showroom</h2>
+                <div class="showroom-combined">
+                    <div class="compact-form">
+                        <p class="card-meta" style="margin-bottom:16px;">{{ dealer_address }}</p>
 
+                        <div class="form-toggle-row">
+                            <button type="button" class="form-toggle" onclick="toggleForm('booking')">
+                                <span>Book a Test Drive</span>
+                                <span class="toggle-icon" id="booking-icon">+</span>
+                            </button>
+                            <button type="button" class="form-toggle" onclick="toggleForm('inquiry')">
+                                <span>Make an Inquiry</span>
+                                <span class="toggle-icon" id="inquiry-icon">+</span>
+                            </button>
+                        </div>
+
+                        <div id="booking-form-wrap" class="collapsible-form">
+                            <form method="POST" action="{{ url_for('submit_booking', car_id=car['id']) }}"
+                                class="form-block">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <label>Your Name</label>
+                                <input type="text" name="name" required>
+                                <label>Phone Number</label>
+                                <input type="tel" name="phone" required>
+                                <label>Booking Type</label>
+                                <select name="booking_type" required>
+                                    <option value="test_drive">Test Drive</option>
+                                    <option value="inspection">Inspection</option>
+                                </select>
+                                <label>Preferred Date</label>
+                                <input type="date" name="preferred_date" required>
+                                <label>Notes (optional)</label>
+                                <textarea name="notes"></textarea>
+                                <button type="submit" class="btn-gold" style="margin-top:14px;">Request Booking</button>
+                            </form>
+                        </div>
+
+                        <div id="inquiry-form-wrap" class="collapsible-form">
+                            <form method="POST" action="{{ url_for('submit_inquiry', car_id=car['id']) }}"
+                                class="form-block">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <label>Your Name</label>
+                                <input type="text" name="name" required>
+                                <label>Phone Number</label>
+                                <input type="tel" name="phone" required>
+                                <label>Message</label>
+                                <textarea name="message" placeholder="I'm interested in this car..."></textarea>
+                                <button type="submit" class="btn-gold" style="margin-top:14px;">Send Inquiry</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="map-frame">
+                        <iframe width="100%" height="100%" style="border:0; display:block;" loading="lazy"
+                            allowfullscreen
+                            src="https://www.google.com/maps?q={{ dealer_address | urlencode }}&output=embed"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <p class="flash-message">{{ message }}</p>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+        </div>
+
+        <div class="detail-sidebar">
+            <div class="price-card">
+                <div class="price-label">Our Price</div>
+                <div class="price-value">₦{{ "{:,}".format(car["price"]) }}</div>
+
+                <a href="https://wa.me/{{ whatsapp_number }}?text=Hi%2C%20I%27m%20interested%20in%20the%20{{ car['year'] }}%20{{ car['make'] }}%20{{ car['model'] }}"
+                    target="_blank" class="btn-whatsapp">💬 WhatsApp Deal</a>
+                <a href="tel:{{ phone_number }}" class="btn-call">📞 Call Dealership</a>
+
+                <p class="price-note">Price excludes registration fees.<br>Verified by PrimeDrive Motors.</p>
+            </div>
+
+            <div class="trust-card">
+                <div class="trust-row-item">
+                    <span class="trust-icon">🛡️</span>
+                    <div>
+                        <h4>Buyer Protection</h4>
+                        <p>Direct dealing, no hidden fees.</p>
+                    </div>
+                </div>
+                <div class="trust-row-item">
+                    <span class="trust-icon">✓</span>
+                    <div>
+                        <h4>Quality Checked</h4>
+                        <p>Every car personally inspected before listing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer
+        style="border-top:1px solid var(--hairline); margin-top:0; padding:40px 48px; color:var(--muted); font-size:13px;">
+        <div
+            style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; max-width:1200px; margin:0 auto;">
+            <div>
+                <div class="brand" style="font-size:16px; margin-bottom:8px;">VINCENT'S <em>AUTO</em></div>
+                <p style="margin:0 0 12px; max-width:280px;">Buy, rent, or swap — quality cars, honestly presented.</p>
+                <div style="display:flex; gap:10px;">
+                    <a href="{{ instagram }}" target="_blank" class="social-icon"
+                        style="color:var(--muted); text-decoration:none;" aria-label="Instagram">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8">
+                            <rect x="2" y="2" width="20" height="20" rx="5" />
+                            <circle cx="12" cy="12" r="4" />
+                            <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" />
+                        </svg>
+                    </a>
+                    <a href="{{ facebook }}" target="_blank" class="social-icon"
+                        style="color:var(--muted); text-decoration:none;" aria-label="Facebook">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                        </svg>
+                    </a>
+                    <a href="{{ whatsapp }}" target="_blank" class="social-icon"
+                        style="color:var(--muted); text-decoration:none;" aria-label="WhatsApp">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8">
+                            <path d="M4 4l16 16M20 4L4 20" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <p style="margin:0 0 6px; color:var(--ivory);">Contact</p>
+                <p style="margin:0 0 4px;">{{ dealer_address }}</p>
+                <p style="margin:0;"><a href="tel:{{ phone_number }}"
+                        style="color:var(--muted); text-decoration:none;">{{ phone_number }}</a></p>
+            </div>
+            <div>
+                <p style="margin:0 0 6px; color:var(--ivory);">Browse</p>
+                <p style="margin:0 0 4px;"><a href="{{ url_for('home', listing_type='sale') }}"
+                        style="color:var(--muted); text-decoration:none;">For Sale</a></p>
+                <p style="margin:0 0 4px;"><a href="{{ url_for('home', listing_type='rent') }}"
+                        style="color:var(--muted); text-decoration:none;">For Rent</a></p>
+                <p style="margin:0;"><a href="{{ url_for('swap_car') }}"
+                        style="color:var(--muted); text-decoration:none;">Swap Your Car</a></p>
+            </div>
+        </div>
+        <p style="text-align:center; margin:32px 0 0; font-size:12px; color:#5A564F;">© 2026 Vincent's Auto. All rights
+            reserved.</p>
+    </footer>
+
+    <div id="lightbox"
+        style="display:none; position:fixed; inset:0; background:rgba(10,10,11,0.95); z-index:1000; align-items:center; justify-content:center; flex-direction:column;">
+        <span onclick="closeLightbox()"
+            style="position:absolute; top:24px; right:32px; color:var(--ivory); font-size:28px; cursor:pointer;">&times;</span>
+        <span class="lightbox-arrow prev" onclick="prevPhoto()">‹</span>
+        <img id="lightbox-img" src="" style="max-width:85vw; max-height:80vh; border-radius:4px;">
+        <span class="lightbox-arrow next" onclick="nextPhoto()">›</span>
+        <p id="lightbox-counter" style="color:var(--muted); font-size:13px; margin-top:16px;"></p>
+    </div>
+
+    <script>
+        window.carPhotos = [
+            {% for photo in photos %}
+        "{{ url_for('static', filename='uploads/' + photo) }}",
+            {% endfor %}
+    ];
+
+        function setMainPhoto(thumbEl, index) {
+            document.getElementById('mainPhoto').src = thumbEl.src;
+            document.getElementById('mainPhoto').setAttribute('onclick', 'openLightbox(' + index + ')');
+            document.querySelectorAll('.thumb-strip img').forEach(function (t) {
+                t.classList.remove('active-thumb');
+            });
+            thumbEl.classList.add('active-thumb');
+        }
+    </script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 </body>
 

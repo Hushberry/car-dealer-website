@@ -1,73 +1,225 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard — PrimeDrive Motors</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .admin-wrap {
+            padding: 32px 48px 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .admin-header h1 {
+            font-size: 26px;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        .admin-user {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0 32px;
+        }
+
+        .admin-nav a {
+            font-size: 13px;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .admin-card {
+            background: var(--surface);
+            border: 1px solid var(--hairline);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .admin-card-photo {
+            height: 140px;
+            background: linear-gradient(160deg, #1A1A1D, #0A0A0B);
+        }
+
+        .admin-card-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .admin-card-body {
+            padding: 16px;
+        }
+
+        .admin-card-body h3 {
+            font-size: 16px;
+            font-weight: 500;
+            margin: 0 0 6px;
+        }
+
+        .admin-card-meta {
+            color: var(--muted);
+            font-size: 12.5px;
+            margin: 2px 0;
+        }
+
+        .admin-price {
+            color: var(--champagne);
+            font-size: 16px;
+            font-weight: 500;
+            margin: 8px 0;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .admin-actions a,
+        .admin-actions button {
+            font-size: 12px;
+            padding: 7px 8px;
+            border-radius: 5px;
+            text-decoration: none;
+            border: 1px solid var(--hairline);
+            background: transparent;
+            color: var(--ivory);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .admin-actions .danger {
+            color: #E0796E;
+            border-color: rgba(224, 121, 110, 0.3);
+        }
+
+        .admin-actions .sold-tag {
+            color: #E0796E;
+            font-size: 12.5px;
+            padding: 7px 0;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Admin Dashboard</h1>
 
-    {% with messages = get_flashed_messages() %}
+    <div class="topbar">
+        <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motor</em></a>
+        <span class="admin-user">Logged in as {{ session["admin_username"] }}</span>
+    </div>
+
+    <div class="admin-wrap">
+
+        {% with messages = get_flashed_messages() %}
         {% if messages %}
-            {% for message in messages %}
-                <p style="color: green;">{{ message }}</p>
-            {% endfor %}
+        {% for message in messages %}
+        <p class="flash-message">{{ message }}</p>
+        {% endfor %}
         {% endif %}
-    {% endwith %}
+        {% endwith %}
 
-    <p>Logged in as: {{ session["admin_username"] }}</p>
-
-    <a href="{{ url_for('add_car') }}">Add New Car</a>
-    <a href="{{ url_for('view_bookings') }}">View Bookings</a>
-    <a href="{{ url_for('view_inquiries') }}">View Inquiries</a>
-    <a href="{{ url_for('change_password') }}">Change Password</a>
-    {% if session["is_super_admin"] %}
-        <a href="{{ url_for('manage_admins') }}">Manage Admins</a>
-    {% endif %}
-    <a href="{{ url_for('admin_logout') }}">Logout</a>
-
-    <hr>
-
-    {% for item in cars %}
-        {% set car = item.car %}
-        {% set photos = item.photos %}
-        <div>
-            <h3>{{ car["year"] }} {{ car["make"] }} {{ car["model"] }}</h3>
-
-            {% if photos %}
-                {% for photo in photos %}
-                    <img src="{{ url_for('static', filename='uploads/' + photo) }}" width="200">
-                {% endfor %}
-            {% else %}
-                <p>No photos available</p>
-            {% endif %}
-
-            <p>Type:
-                {% if car["listing_type"] == "sale" %}For Sale
-                {% elif car["listing_type"] == "rent" %}For Rent
-                {% elif car["listing_type"] == "swap" %}For Swap
-                {% else %}{{ car["listing_type"] }}
-                {% endif %}
-            </p>
-            <p>Price: ₦{{ "{:,}".format(car["price"]) }}</p>
-            <p>{{ car["description"] }}</p>
-
-            <a href="{{ url_for('edit_car', car_id=car['id']) }}">Edit</a>
-
-            <form method="POST" action="{{ url_for('delete_car', car_id=car['id']) }}" style="display:inline;">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" onclick="return confirm('Delete this car?')">Delete</button>
-            </form>
-
-            {% if car['sold'] == 0 %}
-                <form method="POST" action="{{ url_for('mark_sold', car_id=car['id']) }}" style="display:inline;">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit">Mark as Sold</button>
-                </form>
-            {% else %}
-                <strong>SOLD</strong>
-            {% endif %}
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <a href="{{ url_for('add_car') }}" class="btn-gold">+ Add New Car</a>
         </div>
-        <hr>
-    {% endfor %}
+
+        <div class="admin-nav">
+            
+            <a href="{{ url_for('view_bookings') }}" class="btn-outline">
+                View Bookings
+                {% if leads.bookings > 0 %}<span class="nav-badge">{{ leads.bookings }}</span>{% endif %}
+            </a>
+            <a href="{{ url_for('view_inquiries') }}" class="btn-outline">
+                View Inquiries
+                {% if leads.inquiries > 0 %}<span class="nav-badge">{{ leads.inquiries }}</span>{% endif %}
+            </a>
+            <a href="{{ url_for('view_swap_requests') }}" class="btn-outline">
+                Swap Requests
+                {% if leads.swap_requests > 0 %}<span class="nav-badge">{{ leads.swap_requests }}</span>{% endif %}
+            </a>
+            <a href="{{ url_for('view_sell_requests') }}" class="btn-outline">
+                Sell Requests
+                {% if leads.sell_requests > 0 %}<span class="nav-badge">{{ leads.sell_requests }}</span>{% endif %}
+            </a>
+            <a href="{{ url_for('change_password') }}" class="btn-outline">Change Password</a>
+            {% if session["is_super_admin"] %}
+            <a href="{{ url_for('manage_admins') }}" class="btn-outline">Manage Admins</a>
+            {% endif %}
+            <a href="{{ url_for('admin_logout') }}" class="btn-outline">Logout</a>
+        </div>
+
+        <div class="admin-grid">
+            {% for item in cars %}
+            {% set car = item.car %}
+            {% set photos = item.photos %}
+            <div class="admin-card">
+                <div class="admin-card-photo">
+                    {% if photos %}
+                    <img src="{{ url_for('static', filename='uploads/' + photos[0]) }}" alt="{{ car['make'] }}">
+                    {% endif %}
+                </div>
+                <div class="admin-card-body">
+                    <h3>{{ car["year"] }} {{ car["make"] }} {{ car["model"] }}</h3>
+                    <p class="admin-card-meta">
+                        {% if car["listing_type"] == "sale" %}For Sale
+                        {% elif car["listing_type"] == "rent" %}For Rent
+                        {% elif car["listing_type"] == "swap" %}For Swap
+                        {% endif %}
+                        · {{ car["views"] }} view{{ 's' if car["views"] != 1 else '' }}
+                    </p>
+                    <div class="admin-price">₦{{ "{:,}".format(car["price"]) }}</div>
+
+                    <div class="admin-actions">
+                        <a href="{{ url_for('edit_car', car_id=car['id']) }}">Edit</a>
+
+                        <form method="POST" action="{{ url_for('delete_car', car_id=car['id']) }}"
+                            style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="danger"
+                                onclick="return confirm('Delete this car?')">Delete</button>
+                        </form>
+
+                        {% if car['sold'] == 0 %}
+                        <form method="POST" action="{{ url_for('mark_sold', car_id=car['id']) }}"
+                            style="display:inline;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit">Mark Sold</button>
+                        </form>
+                        {% else %}
+                        <span class="sold-tag">SOLD</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
 </body>
+
 </html>

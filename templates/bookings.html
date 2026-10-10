@@ -1,25 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Bookings</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bookings — Vincent's Auto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .page-wrap {
+            padding: 40px 48px 80px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .entry {
+            border: 1px solid var(--hairline);
+            border-radius: 6px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+        }
+
+        .entry p {
+            margin: 4px 0;
+            font-size: 14px;
+        }
+
+        .entry .label {
+            color: var(--muted);
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Test Drive & Inspection Bookings</h1>
-    <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+    <div class="topbar">
+        <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motors</em></a>
+    </div>
+    <div class="page-wrap">
+        <a href="{{ url_for('admin_dashboard') }}" class="back-link">← Back to Dashboard</a>
+        <h1 style="font-size:26px; font-weight:400; margin-top:16px;">Test Drive & Inspection Bookings</h1>
 
-    <hr>
-
-    {% for booking in bookings %}
-       <div>
-        <p><strong>Car:</strong> {{ booking["year"] }} {{ booking["make"] }} {{ booking["model"] }}</p>
-        <p><strong>Type:</strong> {% if booking["booking_type"] == "test_drive" %}Test Drive{% else %}Inspection{% endif %}</p>
-        <p><strong>Name:</strong> {{ booking["name"] }}</p>
-        <p><strong>Phone:</strong> {{ booking["phone"] }}</p>
-        <p><strong>Preferred Date:</strong> {{ booking["preferred_date"] }}</p>
-        <p><strong>Notes:</strong> {{ booking["notes"] }}</p>
-        <p><strong>Requested:</strong> {{ booking["created_at"] }}</p>
-       </div>
-       <hr>
-    {% endfor %}
+        {% for booking in bookings %}
+        <div class="entry">
+            <p><span class="label">Car:</span> {{ booking["year"] }} {{ booking["make"] }} {{ booking["model"] }}</p>
+            <p><span class="label">Type:</span> {% if booking["booking_type"] == "test_drive" %}Test Drive{% else
+                %}Inspection{% endif %}</p>
+            <p><span class="label">Name:</span> {{ booking["name"] }}</p>
+            <p><span class="label">Phone:</span> {{ booking["phone"] }}</p>
+            <p><span class="label">Preferred Date:</span> {{ booking["preferred_date"] }}</p>
+            <p><span class="label">Notes:</span> {{ booking["notes"] }}</p>
+            <p><span class="label">Requested:</span> {{ booking["created_at"] }}</p>
+        </div>
+        {% endfor %}
+    </div>
 </body>
+
 </html>

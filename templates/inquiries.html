@@ -1,23 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Inquiries</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inquiries — Vincent's Auto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .page-wrap {
+            padding: 40px 48px 80px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .entry {
+            border: 1px solid var(--hairline);
+            border-radius: 6px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+        }
+
+        .entry p {
+            margin: 4px 0;
+            font-size: 14px;
+        }
+
+        .entry .label {
+            color: var(--muted);
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Customer Inquiries</h1>
-    <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+    <div class="topbar">
+        <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motors</em></a>
+    </div>
+    <div class="page-wrap">
+        <a href="{{ url_for('admin_dashboard') }}" class="back-link">← Back to Dashboard</a>
+        <h1 style="font-size:26px; font-weight:400; margin-top:16px;">Customer Inquiries</h1>
 
-    <hr>
-
-    {% for inquiry in inquiries %}
-        <div>
-            <p><strong>Car:</strong> {{ inquiry["year"] }} {{ inquiry["make"] }} {{ inquiry["model"] }}</p>
-            <p><strong>Name:</strong> {{ inquiry["name"] }}</p>
-            <p><strong>Phone:</strong> {{ inquiry["phone"] }}</p>
-            <p><strong>Message:</strong> {{ inquiry["message"] }}</p>
-            <p><strong>Received:</strong> {{ inquiry["created_at"] }}</p>
+        {% for inquiry in inquiries %}
+        <div class="entry">
+            <p><span class="label">Car:</span> {{ inquiry["year"] }} {{ inquiry["make"] }} {{ inquiry["model"] }}</p>
+            <p><span class="label">Name:</span> {{ inquiry["name"] }}</p>
+            <p><span class="label">Phone:</span> {{ inquiry["phone"] }}</p>
+            <p><span class="label">Message:</span> {{ inquiry["message"] }}</p>
+            <p><span class="label">Received:</span> {{ inquiry["created_at"] }}</p>
         </div>
-        <hr>
-    {% endfor %}
+        {% endfor %}
+    </div>
 </body>
+
 </html>

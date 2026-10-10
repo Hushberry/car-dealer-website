@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Initial Setup — Vincent's Auto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .auth-wrap { max-width: 420px; margin: 60px auto; padding: 0 20px; }
+        .auth-wrap h1 { font-size: 22px; font-weight: 400; margin-bottom: 8px; text-align: center; }
+        .auth-wrap .sub { color: var(--muted); font-size: 13px; text-align: center; margin-bottom: 24px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="auth-wrap">
+        <h1>Welcome — Let's Set Up Your Site</h1>
+        <p class="sub">This is a one-time setup. Create your admin login and a recovery key — keep the recovery key somewhere safe, it's the only way to reset your password if you forget it.</p>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="flash-error">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="form-block" style="max-width:none;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Admin Username</label>
+            <input type="text" name="username" required>
+            <label>Password</label>
+            <input type="password" name="password" required>
+            <label>Confirm Password</label>
+            <input type="password" name="confirm_password" required>
+            <label>Recovery Key (min. 8 characters)</label>
+            <input type="password" name="recovery_key" required minlength="8">
+            <label>Confirm Recovery Key</label>
+            <input type="password" name="confirm_recovery_key" required minlength="8">
+            <button type="submit" class="btn-gold" style="width:100%; margin-top:24px;">Complete Setup</button>
+        </form>
+    </div>
+</body>
+</html>

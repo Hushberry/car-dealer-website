@@ -1,49 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Manage Admins</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manage Admins — Vincent's Auto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .page-wrap {
+            padding: 40px 48px 80px;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .admin-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--hairline);
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Manage Admins</h1>
+    <div class="topbar">
+        <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motors</em></a>
+    </div>
+    <div class="page-wrap">
+        <a href="{{ url_for('admin_dashboard') }}" class="back-link">← Back to Dashboard</a>
+        <h1 style="font-size:26px; font-weight:400; margin-top:16px;">Manage Admins</h1>
 
-    {% with messages = get_flashed_messages() %}
+        {% with messages = get_flashed_messages() %}
         {% if messages %}
-            {% for message in messages %}
-                <p style="color: red;">{{ message }}</p>
-            {% endfor %}
+        {% for message in messages %}
+        <p class="flash-error">{{ message }}</p>
+        {% endfor %}
         {% endif %}
-    {% endwith %}
+        {% endwith %}
 
-    <h2>Existing Admins</h2>
-    {% for admin in admins %}
-        <p>
-            {{ admin["username"] }}
-            {% if admin["username"] != session["admin_username"] %}
-                <form method="POST" action="{{ url_for('delete_admin', admin_id=admin['id']) }}" style="display:inline;">
+        <div style="margin:24px 0;">
+            {% for admin in admins %}
+            <div class="admin-row">
+                <span>{{ admin["username"] }}</span>
+                {% if admin["username"] != session["admin_username"] %}
+                <form method="POST" action="{{ url_for('delete_admin', admin_id=admin['id']) }}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" onclick="return confirm('Delete this admin account?')">Delete</button>
+                    <button type="submit" class="admin-actions danger"
+                        style="background:none; border:1px solid rgba(224,121,110,0.3); color:#E0796E; padding:6px 12px; border-radius:3px; font-size:12.5px; cursor:pointer;"
+                        onclick="return confirm('Delete this admin account?')">Delete</button>
                 </form>
-            {% else %}
-                (you)
-            {% endif %}
-        </p>
-    {% endfor %}
+                {% else %}
+                <span class="card-meta">(you)</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
 
-    <hr>
-
-    <h2>Add New Admin</h2>
-    <form method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <label>Username:</label>
-        <input type="text" name="username" required>
-        <br>
-        <label>Password:</label>
-        <input type="password" name="password" required>
-        <br>
-        <button type="submit">Create Admin</button>
-    </form>
-
-    <br>
-    <a href="{{ url_for('admin_dashboard') }}">Back to Dashboard</a>
+        <h2 style="font-size:18px; font-weight:500; margin-top:40px;">Add New Admin</h2>
+        <form method="POST" class="form-block" style="max-width:none;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>Username</label>
+            <input type="text" name="username" required>
+            <label>Password</label>
+            <input type="password" name="password" required>
+            <button type="submit" class="btn-gold" style="margin-top:20px;">Create Admin</button>
+        </form>
+    </div>
 </body>
+
 </html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sell Requests — Vincent's Auto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .page-wrap {
+            padding: 40px 48px 80px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .entry {
+            border: 1px solid var(--hairline);
+            border-radius: 6px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+        }
+
+        .entry p {
+            margin: 4px 0;
+            font-size: 14px;
+        }
+
+        .entry .label {
+            color: var(--muted);
+        }
+
+        .entry-photos {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        .entry-photos img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--hairline);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="topbar">
+        <div class="topbar-inner">
+            <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motors</em></a>
+        </div>
+    </div>
+    <div class="page-wrap">
+        <a href="{{ url_for('admin_dashboard') }}" class="back-link">← Back to Dashboard</a>
+        <h1 style="font-size:26px; font-weight:500; margin-top:16px;">Sell Requests</h1>
+
+        {% for item in requests %}
+        {% set r = item.request %}
+        <div class="entry">
+            <p><span class="label">Name:</span> {{ r["name"] }}</p>
+            <p><span class="label">Phone:</span> {{ r["phone"] }}</p>
+            <p><span class="label">Car:</span> {{ r["car_year"] }} {{ r["car_make"] }} {{ r["car_model"] }} — {{
+                r["condition"] }}, {{ r["mileage"] }}</p>
+            <p><span class="label">Asking Price:</span> {{ r["asking_price"] or "Not specified" }}</p>
+            <p><span class="label">Details:</span> {{ r["description"] }}</p>
+            <p><span class="label">Received:</span> {{ r["created_at"] }}</p>
+            {% if item.photos %}
+            <div class="entry-photos">
+                {% for photo in item.photos %}
+                <img src="{{ url_for('static', filename='sell-uploads/' + photo) }}">
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>

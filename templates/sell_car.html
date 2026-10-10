@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sell Your Car — Vincent's Auto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="topbar">
+        <div class="topbar-inner">
+            <a href="{{ url_for('home') }}" class="brand">VINCENT'S <em>AUTO</em></a>
+            <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}">Home</a>
+                <a href="{{ url_for('home') }}#services">Services</a>
+                <a href="{{ url_for('home') }}#cars">Cars</a>
+                <a href="{{ url_for('sell_car') }}">Sell Your Car</a>
+                <a href="{{ url_for('swap_car') }}">Swap Your Car</a>
+                <a href="{{ url_for('home') }}#about">About</a>
+                <a href="{{ url_for('home') }}#contact">Contact</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="swap-hero">
+        <h1>Sell Your Car</h1>
+        <p>Get a fair, fast offer. Tell us about your car, add a few photos, and we'll be in touch.</p>
+    </div>
+
+    <div class="swap-card">
+        <div class="swap-card-header">
+            <div class="tag">We Buy Vehicles</div>
+            <h2>Sell Request Form</h2>
+            <p>Complete the details below — the more photos you add, the faster we can give you a quote.</p>
+        </div>
+
+        <div class="swap-form-body">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <p class="flash-message">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" enctype="multipart/form-data" class="form-block" style="max-width:none;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="swap-section-title">1. Your Details</div>
+                <label>Your Name</label>
+                <input type="text" name="name" required>
+                <label>Phone Number</label>
+                <input type="tel" name="phone" placeholder="080..." required>
+
+                <div class="swap-section-title">2. Car Details</div>
+                <div class="swap-row">
+                    <div>
+                        <label>Year</label>
+                        <input type="number" name="car_year" placeholder="2018">
+                    </div>
+                    <div>
+                        <label>Make</label>
+                        <input type="text" name="car_make" placeholder="Toyota">
+                    </div>
+                </div>
+                <label>Model</label>
+                <input type="text" name="car_model" placeholder="Camry">
+                <div class="swap-row">
+                    <div>
+                        <label>Condition</label>
+                        <select name="condition">
+                            <option value="">Select condition</option>
+                            <option value="Excellent">Excellent</option>
+                            <option value="Good">Good</option>
+                            <option value="Fair">Fair</option>
+                            <option value="Poor">Poor</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Mileage</label>
+                        <input type="text" name="mileage" placeholder="e.g. 60k">
+                    </div>
+                </div>
+                <label>Asking Price (₦, optional)</label>
+                <input type="text" name="asking_price" placeholder="Leave blank if unsure">
+
+                <div class="swap-section-title">3. Photos</div>
+                <label>Upload Photos (front, back, sides, interior)</label>
+                <input type="file" name="photos" accept="image/*" multiple>
+
+                <label>Additional Details (optional)</label>
+                <textarea name="description" placeholder="Anything else we should know about the car..."></textarea>
+
+                <button type="submit" class="btn-gold" style="width:100%; margin-top:28px;">Submit for Review</button>
+            </form>
+        </div>
+    </div>
+
+    <footer
+        style="border-top:1px solid var(--hairline); margin-top:64px; padding:40px 48px; color:var(--muted); font-size:13px;">
+        <div
+            style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; max-width:1200px; margin:0 auto;">
+            <div>
+                <div class="brand" style="font-size:16px; margin-bottom:8px;">VINCENT'S <em>AUTO</em></div>
+                <p style="margin:0 0 12px; max-width:280px;">Buy, rent, or swap — quality cars, honestly presented.</p>
+            </div>
+            <div>
+                <p style="margin:0 0 6px; color:var(--ivory);">Contact</p>
+                <p style="margin:0 0 4px;">{{ dealer_address }}</p>
+                <p style="margin:0;"><a href="tel:{{ phone_number }}" style="color:var(--muted); text-decoration:none;">{{ phone_number }}</a></p>
+            </div>
+        </div>
+        <p style="text-align:center; margin:32px 0 0; font-size:12px; color:#5A564F;">© 2026 Vincent's Auto. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
