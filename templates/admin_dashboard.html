@@ -122,14 +122,58 @@
             font-size: 12.5px;
             padding: 7px 0;
         }
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+        margin: 24px 0 32px;
+    }
+    .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 10px;
+        padding: 18px 20px;
+    }
+    .stat-card .stat-label {
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 8px;
+    }
+    .stat-card .stat-value {
+        font-family: 'Fraunces', serif;
+        font-size: 30px;
+        font-weight: 600;
+        color: var(--champagne);
+    }
+            .admin-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+    
+        .topbar-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 48px;
+            box-sizing: border-box;
+        }
+        @media (max-width: 640px) {
+            .topbar-inner { padding: 12px 16px; }
+        }
     </style>
 </head>
 
 <body>
 
     <div class="topbar">
-        <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motor</em></a>
-        <span class="admin-user">Logged in as {{ session["admin_username"] }}</span>
+        <div class="topbar-inner">
+            <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motors</em></a>
+        </div>
     </div>
 
     <div class="admin-wrap">
@@ -142,8 +186,13 @@
         {% endif %}
         {% endwith %}
 
+        
+
         <div class="admin-header">
-            <h1>Admin Dashboard</h1>
+            <div class="admin-title-group">
+                <h1>Admin Dashboard</h1>
+                <span class="admin-user">Logged in as {{ session["admin_username"] }}</span>
+            </div>
             <a href="{{ url_for('add_car') }}" class="btn-gold">+ Add New Car</a>
         </div>
 
@@ -170,6 +219,29 @@
             <a href="{{ url_for('manage_admins') }}" class="btn-outline">Manage Admins</a>
             {% endif %}
             <a href="{{ url_for('admin_logout') }}" class="btn-outline">Logout</a>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Total Vehicles</div>
+                <div class="stat-value">{{ stats.total_cars }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Available</div>
+                <div class="stat-value">{{ stats.available_cars }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Sold</div>
+                <div class="stat-value">{{ stats.sold_cars }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending Bookings</div>
+                <div class="stat-value">{{ stats.pending_bookings }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending Inquiries</div>
+                <div class="stat-value">{{ stats.pending_inquiries }}</div>
+            </div>
         </div>
 
         <div class="admin-grid">

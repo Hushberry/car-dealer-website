@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ car["year"] }} {{ car["make"] }} {{ car["model"] }} — Vincent's Auto</title>
+    <title>{{ car["year"] }} {{ car["make"] }} {{ car["model"] }} — PrimeDrive Motors</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         .back-link {
@@ -106,13 +106,40 @@
             max-width: 100%;
         }
 
-        #mainPhoto {
-            display: block;
-            width: 100% !important;
-            height: auto;
-            max-height: 420px;
-            aspect-ratio: 4 / 3;
+        .photo-stage {
+            position: relative;
+            width: 100%;
+            height: 520px;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #0e0e10;
+            border: 1px solid var(--hairline);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .photo-stage .photo-bg {
+            position: absolute;
+            top: -30px;
+            left: -30px;
+            width: calc(100% + 60px);
+            height: calc(100% + 60px);
             object-fit: cover;
+            filter: blur(28px) brightness(0.55) saturate(1.2);
+            pointer-events: none;
+        }
+        #mainPhoto {
+            position: relative;
+            z-index: 1;
+            display: block;
+            height: 100%;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            cursor: pointer;
+        }
+        @media (max-width: 760px) {
+            .photo-stage { height: 340px; }
         }
 
         .thumb-strip {
@@ -169,6 +196,35 @@
             width: 100%;
             height: 100%;
             border: 0;
+        }
+
+        .map-frame-full {
+            width: 100%;
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 1px solid var(--hairline);
+        }
+        .map-frame-full iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .forms-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 20px;
+        }
+        .form-col-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 12px;
+        }
+        @media (max-width: 760px) {
+            .forms-row {
+                grid-template-columns: minmax(0, 1fr);
+            }
         }
 
         .price-card,
@@ -294,6 +350,78 @@
                 padding: 24px 12px !important;
             }
         }
+    
+        .photo-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 3;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(10,10,11,0.55);
+            color: #fff;
+            font-size: 30px;
+            line-height: 1;
+            padding: 0 0 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .photo-nav:hover { background: rgba(201,169,110,0.85); border-color: transparent; color: #14110a; }
+        .photo-nav.prev { left: 14px; }
+        .photo-nav.next { right: 14px; }
+        @media (max-width: 760px) {
+            .photo-nav { width: 38px; height: 38px; font-size: 26px; }
+            .photo-nav.prev { left: 8px; }
+            .photo-nav.next { right: 8px; }
+        }
+    
+        .collapsible-form .form-block {
+            max-width: none;
+            width: 100%;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            column-gap: 20px;
+            row-gap: 4px;
+            margin-top: 14px;
+        }
+        .collapsible-form .form-block input,
+        .collapsible-form .form-block select,
+        .collapsible-form .form-block textarea {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 14px;
+        }
+        .collapsible-form .form-block label { margin-bottom: 4px; }
+
+        /* Name | Phone (both forms) */
+        .collapsible-form .form-block > :nth-child(2) { grid-column: 1; grid-row: 1; }
+        .collapsible-form .form-block > :nth-child(3) { grid-column: 1; grid-row: 2; }
+        .collapsible-form .form-block > :nth-child(4) { grid-column: 2; grid-row: 1; }
+        .collapsible-form .form-block > :nth-child(5) { grid-column: 2; grid-row: 2; }
+
+        /* Inquiry: Message + button full width */
+        #inquiry-form-wrap .form-block > :nth-child(6) { grid-column: 1 / -1; grid-row: 3; }
+        #inquiry-form-wrap .form-block > :nth-child(7) { grid-column: 1 / -1; grid-row: 4; }
+        #inquiry-form-wrap .form-block > :nth-child(8) { grid-column: 1 / -1; grid-row: 5; justify-self: start; }
+
+        /* Booking: Type | Date, then Notes + button full width */
+        #booking-form-wrap .form-block > :nth-child(6) { grid-column: 1; grid-row: 3; }
+        #booking-form-wrap .form-block > :nth-child(7) { grid-column: 1; grid-row: 4; }
+        #booking-form-wrap .form-block > :nth-child(8) { grid-column: 2; grid-row: 3; }
+        #booking-form-wrap .form-block > :nth-child(9) { grid-column: 2; grid-row: 4; }
+        #booking-form-wrap .form-block > :nth-child(10) { grid-column: 1 / -1; grid-row: 5; }
+        #booking-form-wrap .form-block > :nth-child(11) { grid-column: 1 / -1; grid-row: 6; }
+        #booking-form-wrap .form-block > :nth-child(12) { grid-column: 1 / -1; grid-row: 7; justify-self: start; }
+
+        @media (max-width: 640px) {
+            .collapsible-form .form-block { grid-template-columns: minmax(0, 1fr); }
+            .collapsible-form .form-block > * { grid-column: 1 !important; grid-row: auto !important; }
+        }
     </style>
 </head>
 
@@ -306,7 +434,7 @@
             <div class="nav-links">
                 <a href="{{ url_for('home') }}">Home</a>
                 <a href="{{ url_for('home') }}#services">Services</a>
-                <a href="{{ url_for('home') }}#cars">Cars</a>
+                <a href="{{ url_for('home') }}#available-cars">Cars</a>
                 <a href="{{ url_for('swap_car') }}">Swap Your Car</a>
                 <a href="{{ url_for('home') }}#about">About</a>
                 <a href="{{ url_for('home') }}#gallery">Gallery</a>
@@ -320,7 +448,7 @@
         <div class="detail-main">
 
             <div class="sticky-subnav">
-                <a href="{{ url_for('home') }}#cars" class="back-link">← Back to all cars</a>
+                <a href="{{ url_for('home') }}#available-cars" class="back-link">← Back to all cars</a>
             </div>
 
             <div class="detail-top-badges">
@@ -343,9 +471,11 @@
             </div>
 
             {% if photos %}
-            <img id="mainPhoto" src="{{ url_for('static', filename='uploads/' + photos[0]) }}"
-                style="width:100%; max-height:420px; object-fit:cover; border-radius:8px; border:1px solid var(--hairline); cursor:pointer;"
-                onclick="openLightbox(0)" alt="{{ car['make'] }} {{ car['model'] }}">
+            <div class="photo-stage">
+                <img id="mainPhotoBg" class="photo-bg" aria-hidden="true" src="{{ url_for('static', filename='uploads/' + photos[0]) }}" alt="">
+                <img id="mainPhoto" src="{{ url_for('static', filename='uploads/' + photos[0]) }}"
+                    onclick="openLightbox(0)" alt="{{ car['make'] }} {{ car['model'] }}">
+            </div>
 
             {% if photos|length > 1 %}
             <div class="thumb-strip">
@@ -394,76 +524,72 @@
 
             {% if car["features"] %}
             <div class="detail-wrap-section">
-                <h2>Key Features</h2>
-                <ul class="features-list">
-                    {% for feature in car["features"].split(",") %}
-                    {% if feature.strip() %}<li>{{ feature.strip() }}</li>{% endif %}
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-
-            <div class="detail-wrap-section">
-                <h2>Visit Our Showroom</h2>
-                <div class="showroom-combined">
-                    <div class="compact-form">
-                        <p class="card-meta" style="margin-bottom:16px;">{{ dealer_address }}</p>
-
-                        <div class="form-toggle-row">
-                            <button type="button" class="form-toggle" onclick="toggleForm('booking')">
-                                <span>Book a Test Drive</span>
-                                <span class="toggle-icon" id="booking-icon">+</span>
-                            </button>
-                            <button type="button" class="form-toggle" onclick="toggleForm('inquiry')">
-                                <span>Make an Inquiry</span>
-                                <span class="toggle-icon" id="inquiry-icon">+</span>
-                            </button>
-                        </div>
-
-                        <div id="booking-form-wrap" class="collapsible-form">
-                            <form method="POST" action="{{ url_for('submit_booking', car_id=car['id']) }}"
-                                class="form-block">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <label>Your Name</label>
-                                <input type="text" name="name" required>
-                                <label>Phone Number</label>
-                                <input type="tel" name="phone" required>
-                                <label>Booking Type</label>
-                                <select name="booking_type" required>
-                                    <option value="test_drive">Test Drive</option>
-                                    <option value="inspection">Inspection</option>
-                                </select>
-                                <label>Preferred Date</label>
-                                <input type="date" name="preferred_date" required>
-                                <label>Notes (optional)</label>
-                                <textarea name="notes"></textarea>
-                                <button type="submit" class="btn-gold" style="margin-top:14px;">Request Booking</button>
-                            </form>
-                        </div>
-
-                        <div id="inquiry-form-wrap" class="collapsible-form">
-                            <form method="POST" action="{{ url_for('submit_inquiry', car_id=car['id']) }}"
-                                class="form-block">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <label>Your Name</label>
-                                <input type="text" name="name" required>
-                                <label>Phone Number</label>
-                                <input type="tel" name="phone" required>
-                                <label>Message</label>
-                                <textarea name="message" placeholder="I'm interested in this car..."></textarea>
-                                <button type="submit" class="btn-gold" style="margin-top:14px;">Send Inquiry</button>
-                            </form>
-                        </div>
+                <div class="features-map-row">
+                    <div class="features-col">
+                        <h2>Key Features</h2>
+                        <ul class="features-list">
+                            {% for feature in car["features"].replace("\n", ",").split(",") %}
+                            {% if feature.strip() %}<li>{{ feature.strip() }}</li>{% endif %}
+                            {% endfor %}
+                        </ul>
                     </div>
-
-                    <div class="map-frame">
-                        <iframe width="100%" height="100%" style="border:0; display:block;" loading="lazy"
-                            allowfullscreen
-                            src="https://www.google.com/maps?q={{ dealer_address | urlencode }}&output=embed"></iframe>
+                    <div class="map-col">
+                        <h2>Visit Our Showroom</h2>
+                        <p class="card-meta" style="margin-bottom:12px;">{{ dealer_address }}</p>
+                        <div class="map-frame-full">
+                            <iframe width="100%" height="100%" style="border:0; display:block;" loading="lazy"
+                                allowfullscreen
+                                src="https://www.google.com/maps?q={{ dealer_address | urlencode }}&output=embed"></iframe>
+                        </div>
                     </div>
                 </div>
-            </div>
 
+                <div class="form-toggle-row">
+                    <button type="button" class="form-toggle" onclick="toggleForm('booking')">
+                        <span>Book a Test Drive</span>
+                        <span class="toggle-icon" id="booking-icon">+</span>
+                    </button>
+                    <button type="button" class="form-toggle" onclick="toggleForm('inquiry')">
+                        <span>Make an Inquiry</span>
+                        <span class="toggle-icon" id="inquiry-icon">+</span>
+                    </button>
+                </div>
+
+                <div id="booking-form-wrap" class="collapsible-form">
+                    <form method="POST" action="{{ url_for('submit_booking', car_id=car['id']) }}"
+                        class="form-block">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <label>Your Name</label>
+                        <input type="text" name="name" required>
+                        <label>Phone Number</label>
+                        <input type="tel" name="phone" required>
+                        <label>Booking Type</label>
+                        <select name="booking_type" required>
+                            <option value="test_drive">Test Drive</option>
+                            <option value="inspection">Inspection</option>
+                        </select>
+                        <label>Preferred Date</label>
+                        <input type="date" name="preferred_date" required>
+                        <label>Notes (optional)</label>
+                        <textarea name="notes"></textarea>
+                        <button type="submit" class="btn-gold" style="margin-top:14px;">Request Booking</button>
+                    </form>
+                </div>
+                <div id="inquiry-form-wrap" class="collapsible-form">
+                    <form method="POST" action="{{ url_for('submit_inquiry', car_id=car['id']) }}"
+                        class="form-block">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <label>Your Name</label>
+                        <input type="text" name="name" required>
+                        <label>Phone Number</label>
+                        <input type="tel" name="phone" required>
+                        <label>Message</label>
+                        <textarea name="message" placeholder="I'm interested in this car..."></textarea>
+                        <button type="submit" class="btn-gold" style="margin-top:14px;">Send Inquiry</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
             {% with messages = get_flashed_messages() %}
             {% if messages %}
             {% for message in messages %}
@@ -511,7 +637,7 @@
         <div
             style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; max-width:1200px; margin:0 auto;">
             <div>
-                <div class="brand" style="font-size:16px; margin-bottom:8px;">VINCENT'S <em>AUTO</em></div>
+                <div class="brand" style="font-size:16px; margin-bottom:8px;">PrimeDrive <em>Motors</em></div>
                 <p style="margin:0 0 12px; max-width:280px;">Buy, rent, or swap — quality cars, honestly presented.</p>
                 <div style="display:flex; gap:10px;">
                     <a href="{{ instagram }}" target="_blank" class="social-icon"
@@ -555,7 +681,7 @@
                         style="color:var(--muted); text-decoration:none;">Swap Your Car</a></p>
             </div>
         </div>
-        <p style="text-align:center; margin:32px 0 0; font-size:12px; color:#5A564F;">© 2026 Vincent's Auto. All rights
+        <p style="text-align:center; margin:32px 0 0; font-size:12px; color:#5A564F;">© 2026 PrimeDrive Motors. All rights
             reserved.</p>
     </footer>
 
@@ -578,12 +704,60 @@
 
         function setMainPhoto(thumbEl, index) {
             document.getElementById('mainPhoto').src = thumbEl.src;
+            document.getElementById('mainPhotoBg').src = thumbEl.src;
             document.getElementById('mainPhoto').setAttribute('onclick', 'openLightbox(' + index + ')');
             document.querySelectorAll('.thumb-strip img').forEach(function (t) {
                 t.classList.remove('active-thumb');
             });
             thumbEl.classList.add('active-thumb');
         }
+    </script>
+    <script>
+        (function () {
+            var stage = document.querySelector('.photo-stage');
+            var thumbs = document.querySelectorAll('.thumb-strip img');
+            if (!stage || thumbs.length < 2) return;
+
+            function currentIndex() {
+                for (var i = 0; i < thumbs.length; i++) {
+                    if (thumbs[i].classList.contains('active-thumb')) return i;
+                }
+                return 0;
+            }
+            function go(step) {
+                var next = (currentIndex() + step + thumbs.length) % thumbs.length;
+                thumbs[next].click();
+                if (thumbs[next].scrollIntoView) {
+                    thumbs[next].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+                }
+            }
+
+            var prev = document.createElement('button');
+            prev.type = 'button';
+            prev.className = 'photo-nav prev';
+            prev.setAttribute('aria-label', 'Previous photo');
+            prev.innerHTML = '&#8249;';
+            prev.onclick = function (e) { e.stopPropagation(); go(-1); };
+
+            var next = document.createElement('button');
+            next.type = 'button';
+            next.className = 'photo-nav next';
+            next.setAttribute('aria-label', 'Next photo');
+            next.innerHTML = '&#8250;';
+            next.onclick = function (e) { e.stopPropagation(); go(1); };
+
+            stage.appendChild(prev);
+            stage.appendChild(next);
+
+            var startX = null;
+            stage.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+            stage.addEventListener('touchend', function (e) {
+                if (startX === null) return;
+                var dx = e.changedTouches[0].clientX - startX;
+                startX = null;
+                if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+            }, { passive: true });
+        })();
     </script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 

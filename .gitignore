@@ -4,3 +4,12 @@ static/uploads/*
 !static/uploads/.gitkeep
 __pycache__/
 *.pyc
+# local backups / scratch
+*.bak
+*.bak2
+*.bak3
+backup_templates/
+fix_*.py
+
+# virtual environment
+venv/

@@ -93,6 +93,21 @@ def get_new_leads_count():
     connection.close()
     return counts
 
+def get_dashboard_stats():
+    connection = sqlite3.connect("database.db")
+    stats = {}
+    stats["total_cars"] = connection.execute("SELECT COUNT(*) FROM cars").fetchone()[0]
+    stats["available_cars"] = connection.execute("SELECT COUNT(*) FROM cars WHERE sold = 0").fetchone()[0]
+    stats["sold_cars"] = connection.execute("SELECT COUNT(*) FROM cars WHERE sold = 1").fetchone()[0]
+    stats["pending_bookings"] = connection.execute(
+        "SELECT COUNT(*) FROM bookings WHERE status = 'new' OR status IS NULL"
+    ).fetchone()[0]
+    stats["pending_inquiries"] = connection.execute(
+        "SELECT COUNT(*) FROM inquiries WHERE status = 'new' OR status IS NULL"
+    ).fetchone()[0]
+    connection.close()
+    return stats
+
 def get_available_cars(listing_type=None, search=None, min_price=None, max_price=None, sort="newest"):
     connection = sqlite3.connect("database.db")
     connection.row_factory = sqlite3.Row
@@ -423,7 +438,7 @@ def admin_dashboard():
         photos = get_photos_for_car(car["id"])
         cars_with_photos.append({"car": car, "photos": photos})
 
-    return render_template("admin_dashboard.html", cars=cars_with_photos, leads=get_new_leads_count())
+    return render_template("admin_dashboard.html", cars=cars_with_photos, leads=get_new_leads_count(), stats=get_dashboard_stats())
 
 @app.route("/admin/add-car", methods=["GET", "POST"])
 def add_car():
@@ -789,15 +804,24 @@ def view_bookings():
 def get_gallery_photos():
     connection = sqlite3.connect("database.db")
     connection.row_factory = sqlite3.Row
-    photos = connection.execute("""
-        SELECT car_photos.filename, car_photos.car_id, cars.make, cars.model, cars.year
-        FROM car_photos
-        JOIN cars ON car_photos.car_id = cars.id
-        WHERE cars.sold = 0
-        ORDER BY car_photos.id DESC
-    """).fetchall()
+    covers = connection.execute(
+        "SELECT car_photos.filename, car_photos.car_id, cars.make, cars.model, cars.year "
+        "FROM car_photos JOIN cars ON car_photos.car_id = cars.id "
+        "WHERE cars.sold = 0 AND car_photos.id = ("
+        "SELECT MIN(cp2.id) FROM car_photos cp2 WHERE cp2.car_id = car_photos.car_id) "
+        "ORDER BY car_photos.car_id DESC"
+    ).fetchall()
+    result = []
+    for row in covers:
+        item = dict(row)
+        rows = connection.execute(
+            "SELECT filename FROM car_photos WHERE car_id = ? ORDER BY id ASC",
+            (row["car_id"],)
+        ).fetchall()
+        item["photos"] = [r["filename"] for r in rows]
+        result.append(item)
     connection.close()
-    return photos
+    return result
 
 @app.route("/admin/setup", methods=["GET", "POST"])
 def admin_setup():

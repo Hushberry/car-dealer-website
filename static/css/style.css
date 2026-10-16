@@ -32,7 +32,7 @@ body {
     font-weight: 400;
     line-height: 1.65;
     font-size: 16px;
-    padding-top: 23px;
+    padding-top: 84px;
 }
 
 h1, h2, h3, .brand, .price {
@@ -240,7 +240,7 @@ a {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(10,10,11,0.55) 0%, rgba(10,10,11,0.85) 60%, rgba(10,10,11,1) 100%);
+    background: linear-gradient(180deg, rgba(10,10,11,0.65) 0%, rgba(10,10,11,0.85) 60%, rgba(10,10,11,1) 100%);
     z-index: 1;
     pointer-events: none;
 }
@@ -259,6 +259,7 @@ a {
 
 .hero-content h1 {
     color: #F5F1E8;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.55);
 }
 
 .hero-content h1 span {
@@ -270,6 +271,7 @@ a {
     margin-right: auto;
     font-weight: 600;
     color: rgba(245, 241, 232, 0.78);
+    text-shadow: 0 1px 8px rgba(0,0,0,0.5);
 }
 
 .hero-content .pill {
@@ -362,6 +364,15 @@ a {
     border-radius: 2px;
 }
 
+@media (max-width: 768px) {
+    .filters select, .filters input {
+        padding: 9px 14px;
+    }
+    .filters button {
+        padding: 9px 20px;
+    }
+}
+
 .filters button {
     background: none;
     border: 1px solid var(--champagne-dim);
@@ -407,10 +418,12 @@ a {
     }
     .hero-content .pill-row {
         gap: 8px;
+        justify-content: center;
     }
     .pill {
         padding: 8px 13px;
         font-size: 12px;
+        flex: 0 1 auto;
     }
     .hero-dots {
         bottom: 18px;
@@ -420,7 +433,7 @@ a {
 /* Car grid */
 .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1px;
     background: var(--hairline);
     max-width: 1200px;
@@ -441,16 +454,18 @@ a {
 }
 
 .card-photo {
-    height: 160px;
+    height: 190px;
     position: relative;
     overflow: hidden;
     background: linear-gradient(160deg, #131315, #0A0A0B);
+    border-radius: 6px 6px 0 0;
 }
 
 .card-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     display: block;
     transition: opacity 0.2s ease;
 }
@@ -1166,8 +1181,8 @@ a {
 
 .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
     margin-top: 32px;
     text-align: left;
     width: 100%;
@@ -1185,16 +1200,21 @@ a {
 .gallery-item {
     position: relative;
     display: block;
-    height: 160px;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    height: auto;
     border-radius: 6px;
     overflow: hidden;
     border: 1px solid var(--hairline);
+    background: var(--surface, #1a1a1c);
 }
 
 .gallery-item img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     transition: transform 0.3s ease;
 }
 
@@ -1205,7 +1225,7 @@ a {
 .gallery-item .overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, transparent 40%, rgba(10,10,11,0.9) 100%);
+    background: linear-gradient(180deg, transparent 60%, rgba(10,10,11,0.75) 100%);
     display: flex;
     align-items: flex-end;
     padding: 10px;
@@ -1257,26 +1277,28 @@ a {
 }
 
 .features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     list-style: none;
     padding: 0;
-    margin: 16px 0 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 10px;
+    margin: 0;
 }
 
 .features-list li {
-    color: var(--ivory);
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 14px;
-    padding-left: 20px;
-    position: relative;
+    color: var(--ivory, #f5f5f0);
+    padding: 4px 0;
 }
 
 .features-list li::before {
-    content: '✓';
-    color: var(--champagne);
-    position: absolute;
-    left: 0;
+    content: "✓";
+    color: var(--gold, #d4af37);
+    font-weight: 700;
+    font-size: 13px;
 }
 
 .form-toggle {
@@ -1454,8 +1476,9 @@ a {
 
 @media (max-width: 640px) {
     .sticky-whatsapp {
-        bottom: 16px;
-        left: 16px;
+        bottom: 76px;
+        right: 16px;
+        left: auto;
         width: 50px;
         height: 50px;
     }
@@ -1466,10 +1489,10 @@ a {
     .grid { grid-template-columns: repeat(2, 1fr); }
     .topbar-inner, .filters, .section-label, .container { padding-left: 20px; padding-right: 20px; }
     .grid { margin-left: 20px; margin-right: 20px; }
-    .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+    .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
 
     .services-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 16px;
     }
     .service-card { padding: 18px; }
@@ -1607,7 +1630,7 @@ a {
 
 
 /* ============================================================
-   CAR DETAIL — RESPONSIVE 
+   CAR DETAIL — RESPONSIVE
    ============================================================ */
 
 .showroom-combined .form-toggle-row {
@@ -1648,7 +1671,7 @@ a {
     .spec-tile .tile-value { font-size: 13.5px; }
     .price-card .price-value { font-size: 26px; }
     .thumb-strip img { width: 72px; height: 54px; }
-    #mainPhoto { max-height: 260px !important; }
+    .photo-stage { height: 320px; }
 }
 
 /* ============================================================
@@ -1682,7 +1705,7 @@ img, iframe, video {
    ============================================================ */
 @media (max-width: 900px) {
     .grid { grid-template-columns: repeat(2, 1fr); }
-    .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+    .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
     .services-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
     .about-grid { grid-template-columns: 1fr; }
     .about-grid img { order: -1; height: 260px; }
@@ -1703,7 +1726,7 @@ img, iframe, video {
    BREAKPOINT: ≤768px (mobile landscape / small tablet)
    ============================================================ */
 @media (max-width: 768px) {
-    .hero-banner { min-height: 440px; padding: 32px 20px 48px; }
+    .hero-banner { min-height: 385px; padding: 24px 20px 38px; }
     .hero-content h1 { font-size: 30px !important; }
     .hero-content p { font-size: 14px; }
     .pill { padding: 7px 13px; font-size: 12px; }
@@ -1711,7 +1734,8 @@ img, iframe, video {
     .filters {
         flex-direction: column;
         align-items: stretch;
-        padding: 20px;
+        padding: 16px 20px;
+        gap: 8px;
     }
     .filters select, .filters input, .filters button, .filters a {
         width: 100%;
@@ -1765,7 +1789,7 @@ img, iframe, video {
 
     .swap-card { margin-left: 0; margin-right: 0; border-radius: 0; border-left: none; border-right: none; }
 
-    .sticky-whatsapp { width: 48px; height: 48px; bottom: 16px; left: 16px; }
+    .sticky-whatsapp { width: 48px; height: 48px; bottom: 76px; right: 16px; left: auto; }
     .sticky-whatsapp svg { width: 24px; height: 24px; }
     #backToTop { width: 40px; height: 40px; bottom: 16px; right: 16px; }
 }
@@ -1819,13 +1843,11 @@ img, iframe, video {
    ============================================================ */
 .sticky-subnav {
     position: sticky;
-    top: 73px;
+    top: 84px;
     z-index: 50;
-    background: rgba(10,10,11,0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgb(10,10,11);
     border-bottom: 1px solid var(--hairline);
-    padding: 14px 48px;
+    padding: 12px 48px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1841,14 +1863,21 @@ img, iframe, video {
 }
 
 @media (max-width: 640px) {
-    .sticky-subnav { 
-        padding: 12px 20px; 
-        top: 55px
+    body {
+        padding-top: 60px;
+    }
+    .sticky-subnav {
+        padding: 12px 20px;
+        top: 60px;
     }
 }
 
 /* Map + contact responsiveness */
 @media (max-width: 640px) {
+    .showroom-combined .map-frame iframe {
+        min-height: 200px;
+        height: 200px;
+    }
     .contact-section .map-frame iframe {
         min-height: 200px;
         height: 200px;
@@ -1863,4 +1892,130 @@ img, iframe, video {
         text-align: center;
         box-sizing: border-box;
     }
+}
+
+.features-map-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+}
+.features-map-row h2 {
+    margin-top: 0;
+}
+@media (max-width: 760px) {
+    .features-map-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+    }
+}
+
+
+/* PrimeDrive Motors — full-width vehicle photo */
+.photo-stage {
+    position: relative;
+    width: 100%;
+    height: 520px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+}
+
+/* Remove the blurred background layer */
+.photo-stage .photo-bg {
+    display: none !important;
+}
+
+/* Make the actual car photo fill the gallery */
+.photo-stage #mainPhoto {
+    display: block !important;
+    position: relative;
+    z-index: 1;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: cover !important;
+    object-position: center 60% !important;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+}
+
+/* Responsive layout */
+@media (max-width: 760px) {
+    .photo-stage {
+        height: 360px;
+    }
+}
+
+@media (max-width: 420px) {
+    .photo-stage {
+        height: 300px;
+    }
+}
+
+/* Brand logo icon */
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1;
+}
+.brand::before {
+    content: "";
+    flex-shrink: 0;
+    width: 40px;
+    height: 20px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 32'%3E%3Cpath fill='%23c9a96e' d='M4 22l2-7c1-3 3-4 6-4h8l5-6c1-1 2-1 4-1h14c2 0 3 0 4 1l6 6 5 1c4 1 6 3 6 7v3z'/%3E%3Cpath fill='%230a0a0b' d='M27 7h14l6 5H23z'/%3E%3Ccircle cx='17' cy='23' r='6' fill='%230a0a0b'/%3E%3Ccircle cx='17' cy='23' r='3.5' fill='%23c9a96e'/%3E%3Ccircle cx='47' cy='23' r='6' fill='%230a0a0b'/%3E%3Ccircle cx='47' cy='23' r='3.5' fill='%23c9a96e'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+@media (max-width: 640px) {
+    .brand { gap: 8px; }
+    .brand::before { width: 32px; height: 16px; }
+}
+
+/* Gallery tile slider */
+.gallery-item .g-link { display: block; width: 100%; height: 100%; }
+.gallery-item .g-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(10,10,11,0.55);
+    color: #fff;
+    font-size: 24px;
+    line-height: 1;
+    padding: 0 0 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.85;
+    transition: background 0.2s, opacity 0.2s;
+}
+.gallery-item .g-nav:hover { background: rgba(201,169,110,0.9); color: #14110a; opacity: 1; }
+.gallery-item .g-prev { left: 8px; }
+.gallery-item .g-next { right: 8px; }
+.gallery-item .g-count {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 3;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(10,10,11,0.6);
+    color: #f4f1ea;
+    font-size: 11px;
+    font-weight: 600;
+    pointer-events: none;
 }

@@ -17,7 +17,7 @@
             <div class="nav-links">
                 <a href="{{ url_for('home') }}">Home</a>
                 <a href="{{ url_for('home') }}#services">Services</a>
-                <a href="{{ url_for('home') }}#cars">Cars</a>
+                <a href="{{ url_for('home') }}#available-cars">Cars</a>
                 <a href="{{ url_for('swap_car') }}">Swap Your Car</a>
                 <a href="{{ url_for('home') }}#about">About</a>
                 <a href="{{ url_for('home') }}#gallery">Gallery</a>
@@ -391,7 +391,7 @@
                     </div>
                 </div>
             </div>
-            <img src="{{ url_for('static', filename='img/about.jpg') }}" alt="Vincent's Auto vehicle inventory">
+            <img src="{{ url_for('static', filename='img/about.jpg') }}" alt="PrimeDrive Motors vehicle inventory">
         </div>
     </section>
 
@@ -450,14 +450,22 @@
 
         <div class="gallery-grid" id="galleryGrid">
             {% for p in gallery_photos %}
-            <a href="{{ url_for('car_detail', car_id=p['car_id']) }}"
-                class="gallery-item {% if loop.index > 12 %}hidden-extra{% endif %}">
-                <img src="{{ url_for('static', filename='uploads/' + p['filename']) }}"
-                    alt="{{ p['make'] }} {{ p['model'] }}">
-                <div class="overlay">
-                    <span>{{ p['year'] }} {{ p['make'] }} {{ p['model'] }}</span>
-                </div>
-            </a>
+            <div class="gallery-item {% if loop.index > 12 %}hidden-extra{% endif %}"
+                data-photos='{{ p["photos"]|tojson }}'
+                data-base="{{ url_for('static', filename='uploads/') }}" data-i="0">
+                <a href="{{ url_for('car_detail', car_id=p['car_id']) }}" class="g-link">
+                    <img src="{{ url_for('static', filename='uploads/' + p['filename']) }}"
+                        alt="{{ p['make'] }} {{ p['model'] }}">
+                    <div class="overlay">
+                        <span>{{ p['year'] }} {{ p['make'] }} {{ p['model'] }}</span>
+                    </div>
+                </a>
+                {% if p['photos']|length > 1 %}
+                <button type="button" class="g-nav g-prev" data-dir="-1" aria-label="Previous photo">&#8249;</button>
+                <button type="button" class="g-nav g-next" data-dir="1" aria-label="Next photo">&#8250;</button>
+                <span class="g-count">1/{{ p['photos']|length }}</span>
+                {% endif %}
+            </div>
             {% endfor %}
 
         </div>
@@ -475,7 +483,7 @@
         <div
             style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; max-width:1200px; margin:0 auto;">
             <div>
-                <div class="brand" style="font-size:16px; margin-bottom:8px;">VINCENT'S <em>AUTO</em></div>
+                <div class="brand" style="font-size:16px; margin-bottom:8px;">PrimeDrive <em>Motors</em></div>
                 <p style="margin:0 0 12px; max-width:280px;">Buy, rent, or swap — quality cars, honestly presented.</p>
                 <div style="display:flex; gap:10px;">
                     <a href="{{ instagram }}" target="_blank" class="social-icon"
@@ -519,7 +527,7 @@
                         style="color:var(--muted); text-decoration:none;">Swap Your Car</a></p>
             </div>
         </div>
-        <p style="text-align:center; margin:32px 0 0; font-size:12px; color:#5A564F;">© 2026 Vincent's Auto. All rights
+        <p style="text-align:center; margin:32px 0 0; font-size:12px; color:#5A564F;">© 2026 PrimeDrive Motors. All rights
             reserved.</p>
     </footer>
 
@@ -536,6 +544,26 @@
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 
+<script>
+    (function () {
+        var grid = document.getElementById('galleryGrid');
+        if (!grid) return;
+        grid.addEventListener('click', function (e) {
+            var btn = e.target.closest('.g-nav');
+            if (!btn) return;
+            e.preventDefault();
+            e.stopPropagation();
+            var tile = btn.closest('.gallery-item');
+            var photos = JSON.parse(tile.getAttribute('data-photos'));
+            var i = parseInt(tile.getAttribute('data-i'), 10) || 0;
+            i = (i + parseInt(btn.getAttribute('data-dir'), 10) + photos.length) % photos.length;
+            tile.setAttribute('data-i', i);
+            tile.querySelector('img').src = tile.getAttribute('data-base') + photos[i];
+            var c = tile.querySelector('.g-count');
+            if (c) c.textContent = (i + 1) + '/' + photos.length;
+        });
+    })();
+    </script>
 </body>
 
 </html>
