@@ -21,14 +21,15 @@
             border-bottom: 1px solid var(--hairline);
         }
     </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-polish.css') }}?v=1">
 </head>
 
-<body>
+<body class="admin-page">
     <div class="topbar">
         <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motors</em></a>
     </div>
-    <div class="page-wrap">
-        <a href="{{ url_for('admin_dashboard') }}" class="back-link">← Back to Dashboard</a>
+    <div class="page-wrap admin-wrap">
+        <a href="{{ url_for('admin_dashboard') }}" class="back-link admin-back">← Back to Dashboard</a>
         <h1 style="font-size:26px; font-weight:400; margin-top:16px;">Manage Admins</h1>
 
         {% with messages = get_flashed_messages() %}
@@ -67,6 +68,12 @@
             <button type="submit" class="btn-gold" style="margin-top:20px;">Create Admin</button>
         </form>
     </div>
+
+<footer class="admin-footer"><div class="admin-footer-inner">
+<span class="af-brand">PrimeDrive <em>Motors</em></span>
+<span>Admin Panel &middot; Authorized personnel only</span>
+<a href="/">View public site &rarr;</a>
+</div></footer>
 </body>
 
 </html>

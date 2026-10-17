@@ -166,9 +166,10 @@
             .topbar-inner { padding: 12px 16px; }
         }
     </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-polish.css') }}?v=1">
 </head>
 
-<body>
+<body class="admin-page">
 
     <div class="topbar">
         <div class="topbar-inner">
@@ -292,6 +293,12 @@
 
     </div>
 
+
+<footer class="admin-footer"><div class="admin-footer-inner">
+<span class="af-brand">PrimeDrive <em>Motors</em></span>
+<span>Admin Panel &middot; Authorized personnel only</span>
+<a href="/">View public site &rarr;</a>
+</div></footer>
 </body>
 
 </html>

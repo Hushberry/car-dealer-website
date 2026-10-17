@@ -1,0 +1,21 @@
+/* Admin polish */
+body.admin-page{min-height:100vh;display:flex;flex-direction:column}
+body.admin-page .topbar:not(:has(.topbar-inner)),body.admin-page header.topbar,body.admin-page .admin-topbar{display:flex !important;align-items:center;padding:16px 48px !important;box-sizing:border-box}
+.admin-wrap{width:100%;max-width:1100px;margin:0 auto !important;padding:36px 48px 60px !important;box-sizing:border-box;flex:1 0 auto}
+.admin-wrap h1{font-size:clamp(26px,3vw,36px);margin:6px 0 8px;line-height:1.15}
+.admin-back{display:inline-flex;align-items:center;gap:6px;color:#c9a96e !important;text-decoration:none !important;font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin:0 0 20px;padding:8px 16px;border:1px solid rgba(201,169,110,.4);border-radius:999px;transition:.2s}
+.admin-back:hover{background:#c9a96e;color:#0a0a0b !important}
+.admin-wrap table{width:100%;border-collapse:collapse}
+.admin-wrap th{text-align:left;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:#c9a96e;padding:12px 14px;border-bottom:1px solid #26262a}
+.admin-wrap td{padding:14px;border-bottom:1px solid #1d1d20;vertical-align:top}
+.admin-footer{margin-top:auto;border-top:1px solid #1d1d20;background:#08080a}
+.admin-footer-inner{max-width:1100px;margin:0 auto;padding:20px 48px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:#8a8a93}
+.admin-footer .af-brand{color:#f2f2f4;font-weight:700;letter-spacing:.5px}
+.admin-footer .af-brand em{font-style:normal;color:#c9a96e}
+.admin-footer a{color:#c9a96e;text-decoration:none}
+.admin-footer a:hover{text-decoration:underline}
+@media (max-width:640px){
+ body.admin-page .topbar:not(:has(.topbar-inner)),body.admin-page header.topbar,body.admin-page .admin-topbar{padding:12px 16px !important}
+ .admin-wrap{padding:24px 16px 40px !important}
+ .admin-footer-inner{padding:18px 16px;flex-direction:column;align-items:flex-start;gap:6px}
+}
