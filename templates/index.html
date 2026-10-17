@@ -194,9 +194,10 @@
                  LISTING BADGE
                  ================================================= -->
 
-                <span class="badge {% if car['sold'] == 1 %}badge-sold{% endif %}">
-                    {% if car['sold'] == 1 %}Sold{% else %}Available{% endif %}
-                </span>
+                <div class="card-tags">
+                    <span class="badge {% if car['sold'] == 1 %}badge-sold{% endif %}">{% if car['sold'] == 1 %}Sold{% else %}Available{% endif %}</span>
+                    {% if car["condition"] %}<span class="cond-tag {% if car["condition"] == "Foreign Used" %}cond-foreign{% elif car["condition"] == "Nigerian Used" %}cond-local{% else %}cond-new{% endif %}">{{ car["condition"] }}</span>{% endif %}
+                </div>
 
             </div>
 
@@ -207,44 +208,22 @@
 
             <div class="card-body">
 
-                <!-- Vehicle Name -->
+                <div class="card-top">
+                    <span class="year-chip">{{ car["year"] }}</span>
+                    {% if car["body_type"] %}<span class="body-chip">{{ car["body_type"] }}</span>{% endif %}
+                </div>
+
                 <h3>
-                    <a href="{{ url_for('car_detail', car_id=car['id']) }}">
-                        {{ car["year"] }} {{ car["make"] }} {{ car["model"] }}
-                    </a>
+                    <a href="{{ url_for('car_detail', car_id=car['id']) }}">{{ car["make"] }} {{ car["model"] }}</a>
                 </h3>
 
+                <div class="price">₦{{ "{:,}".format(car["price"]) }}</div>
 
-                <!-- Price -->
-                <div class="price">
-                    ₦{{ "{:,}".format(car["price"]) }}
+                <div class="spec-grid">
+                    <div class="spec"><small>Mileage</small><b>{% if car["mileage"] %}{{ car["mileage"] }} km{% else %}&mdash;{% endif %}</b></div>
+                    <div class="spec"><small>Gearbox</small><b>{{ car["transmission"] or "—" }}</b></div>
+                    <div class="spec"><small>Fuel</small><b>{{ car["fuel_type"] or "—" }}</b></div>
                 </div>
-
-
-                <!-- =================================================
-                 VEHICLE QUICK SPECIFICATIONS
-                 ================================================= -->
-
-                <div class="card-specs">
-
-                    {% if car["mileage"] %}
-                    <span>⏱ {{ car["mileage"] }} km</span>
-                    {% endif %}
-
-                    {% if car["transmission"] %}
-                    <span>⭐ {{ car["transmission"] }}</span>
-                    {% endif %}
-
-                    {% if car["fuel_type"] %}
-                    <span>⛽ {{ car["fuel_type"] }}</span>
-                    {% endif %}
-
-                    {% if car["body_type"] %}
-                    <span>🚗 {{ car["body_type"] }}</span>
-                    {% endif %}
-
-                </div>
-
 
                 <!-- Description -->
                 {% if car["description"] %}

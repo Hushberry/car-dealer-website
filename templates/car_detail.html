@@ -761,6 +761,36 @@
     </script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
+
+<script id="share-btn-js">
+(function () {
+  var bar = document.querySelector('.sticky-subnav');
+  if (!bar) return;
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'share-btn';
+  b.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg><span>Share</span>';
+  bar.appendChild(b);
+  function toast(msg) {
+    var t = document.createElement('div');
+    t.className = 'share-toast';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(function () { t.classList.add('show'); }, 10);
+    setTimeout(function () { t.remove(); }, 2300);
+  }
+  b.addEventListener('click', function () {
+    var data = { title: document.title, text: 'Check out this car at PrimeDrive Motors', url: location.href };
+    if (navigator.share) {
+      navigator.share(data).catch(function () {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(location.href).then(function () { toast('Link copied'); });
+    } else {
+      window.prompt('Copy this link:', location.href);
+    }
+  });
+})();
+</script>
 </body>
 
 </html>

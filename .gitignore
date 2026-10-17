@@ -13,3 +13,8 @@ fix_*.py
 
 # virtual environment
 venv/
+database.db.bak
+*.bak4
+*.bak5
+*.bak6
+*.bak7
