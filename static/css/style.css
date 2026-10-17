@@ -2164,3 +2164,19 @@ html body{padding-top:0 !important;margin-top:0 !important}
 .back-pill{display:inline-flex;align-items:center;gap:6px;color:#c9a96e;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:8px 16px;border:1px solid rgba(201,169,110,.4);border-radius:999px;transition:.2s}
 .back-pill:hover{background:#c9a96e;color:#0a0a0b}
 @media (max-width:900px){.page-back{padding:14px 16px 0}}
+
+/* Swipe + hover polish */
+.card-photo,.gallery-item{touch-action:pan-y}
+.photo-fade{animation:photoFade .35s ease}
+@keyframes photoFade{from{opacity:.25}to{opacity:1}}
+.gallery-item .g-nav{opacity:0 !important;transition:opacity .25s ease !important}
+.gallery-item:hover .g-nav,.gallery-item:focus-within .g-nav{opacity:1 !important}
+@media (hover:none){.gallery-item .g-nav{opacity:.85 !important}}
+#about img{border-radius:12px;transition:transform .45s ease,box-shadow .45s ease,filter .45s ease;cursor:pointer}
+#about img:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 0 1px rgba(201,169,110,.55);filter:brightness(1.06)}
+
+/* Sticky all navs + about size */
+html,body{overflow-x:clip !important}
+.topbar{position:sticky !important;top:0;z-index:100;background:rgba(10,10,11,.95) !important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#about img{width:100%;max-width:100%;height:auto;max-height:360px;object-fit:cover}
+@media (max-width:640px){#about img{max-height:240px}}

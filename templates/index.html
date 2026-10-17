@@ -552,6 +552,43 @@
   });
 })();
 </script>
+
+<script id="swipe-js">
+(function () {
+  function swipe(el, pick) {
+    var sx = 0, sy = 0, on = false;
+    el.addEventListener('touchstart', function (e) {
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY; on = true;
+    }, { passive: true });
+    el.addEventListener('touchend', function (e) {
+      if (!on) return;
+      on = false;
+      var dx = e.changedTouches[0].clientX - sx;
+      var dy = e.changedTouches[0].clientY - sy;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        var b = pick(dx < 0 ? 'next' : 'prev');
+        if (b) b.click();
+      }
+    }, { passive: true });
+  }
+  function fade(img) {
+    if (!img || !window.MutationObserver) return;
+    new MutationObserver(function () {
+      img.classList.remove('photo-fade');
+      void img.offsetWidth;
+      img.classList.add('photo-fade');
+    }).observe(img, { attributes: true, attributeFilter: ['src'] });
+  }
+  document.querySelectorAll('.card-photo').forEach(function (el) {
+    swipe(el, function (d) { return el.querySelector('.photo-arrow.' + d); });
+    fade(el.querySelector('.rotating-photo'));
+  });
+  document.querySelectorAll('.gallery-item').forEach(function (el) {
+    swipe(el, function (d) { return el.querySelector('.g-' + (d === 'next' ? 'next' : 'prev')); });
+    fade(el.querySelector('img'));
+  });
+})();
+</script>
 </body>
 
 </html>
