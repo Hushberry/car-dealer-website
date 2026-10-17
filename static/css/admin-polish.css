@@ -19,3 +19,46 @@ body.admin-page .topbar:not(:has(.topbar-inner)),body.admin-page header.topbar,b
  .admin-wrap{padding:24px 16px 40px !important}
  .admin-footer-inner{padding:18px 16px;flex-direction:column;align-items:flex-start;gap:6px}
 }
+
+/* Change password card */
+body.page-change-password .admin-wrap{flex:0 0 auto !important;width:calc(100% - 32px);max-width:480px !important;margin:48px auto !important;padding:36px 36px 32px !important;background:#0e0e10;border:1px solid #26262a;border-top:3px solid #c9a96e;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+body.page-change-password .admin-wrap h1{text-align:center;margin:0 0 6px}
+body.page-change-password .admin-wrap h1::before{content:"";display:block;width:56px;height:56px;margin:0 auto 14px;border-radius:50%;border:1px solid rgba(201,169,110,.4);background:rgba(201,169,110,.1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c9a96e' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='11' width='16' height='10' rx='2'/%3E%3Cpath d='M8 11V7a4 4 0 0 1 8 0v4'/%3E%3C/svg%3E") center/26px no-repeat}
+.cp-sub{text-align:center;color:#9a9aa3;font-size:14px;margin:0 0 26px}
+body.page-change-password form label{display:block;font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#c9a96e;margin:18px 0 8px}
+body.page-change-password form label:first-of-type{margin-top:0}
+body.page-change-password form input[type=password],body.page-change-password form input[type=text]{width:100%;box-sizing:border-box;padding:14px 70px 14px 14px;background:#131316;border:1px solid #2a2a2f;border-radius:8px;color:#f2f2f4;font-size:15px;outline:0;transition:.2s}
+body.page-change-password form input:focus{border-color:#c9a96e;box-shadow:0 0 0 3px rgba(201,169,110,.15)}
+body.page-change-password form button[type=submit]{width:100%;margin-top:24px;padding:14px;border-radius:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+body.page-change-password .admin-back{display:flex;justify-content:center;margin:20px 0 0}
+.pw-wrap{position:relative}
+.pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:0;color:#c9a96e;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;cursor:pointer}
+.pw-meter{display:flex;gap:6px;align-items:center;margin-top:10px}
+.pw-meter i{flex:1;height:4px;border-radius:2px;background:#26262a}
+.pw-meter span{font-size:11px;color:#9a9aa3;min-width:52px;text-align:right}
+.pw-meter[data-s="1"] i:nth-child(-n+1){background:#ef4444}
+.pw-meter[data-s="2"] i:nth-child(-n+2){background:#f59e0b}
+.pw-meter[data-s="3"] i:nth-child(-n+3){background:#c9a96e}
+.pw-meter[data-s="4"] i:nth-child(-n+4){background:#22c55e}
+.pw-match{font-size:12px;margin-top:8px;min-height:14px}
+.pw-match.ok{color:#22c55e}.pw-match.bad{color:#ef4444}
+
+/* Manage admins */
+body.page-manage-admins .admin-wrap{max-width:760px !important}
+.ma-label{font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#8a8a93;margin:22px 0 10px}
+.ma-list{border:1px solid #26262a;border-radius:12px;background:#0e0e10;overflow:hidden;margin:0 0 32px}
+.ma-row{display:flex !important;align-items:center;gap:14px;padding:16px 20px !important;margin:0 !important;border:0 !important;border-bottom:1px solid #1d1d20 !important}
+.ma-row:last-child{border-bottom:0 !important}
+.ma-row > :last-child{margin-left:auto}
+.ma-avatar{width:40px;height:40px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:rgba(201,169,110,.14);border:1px solid rgba(201,169,110,.45);color:#c9a96e;font-weight:800;text-transform:uppercase}
+.ma-you{padding:3px 12px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#c9a96e;border:1px solid rgba(201,169,110,.5);background:rgba(201,169,110,.08)}
+.ma-card{border:1px solid #26262a;border-top:3px solid #c9a96e;border-radius:12px;background:#0e0e10;padding:28px}
+.ma-card > h2,.ma-card > h3{margin:0 0 22px;font-size:20px}
+.ma-form{display:grid !important;grid-template-columns:1fr 1fr;gap:18px 16px;align-items:end}
+.ma-field label{display:block;font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#c9a96e;margin:0 0 8px}
+.ma-form input[type=text],.ma-form input[type=password]{width:100%;box-sizing:border-box;padding:14px 70px 14px 14px;background:#131316;border:1px solid #2a2a2f;border-radius:8px;color:#f2f2f4;font-size:15px;outline:0;transition:.2s}
+.ma-form input:focus{border-color:#c9a96e;box-shadow:0 0 0 3px rgba(201,169,110,.15)}
+.ma-form button[type=submit]{grid-column:1/-1;justify-self:start;padding:13px 28px;border-radius:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+.ma-form .pw-wrap{position:relative}
+.ma-form .pw-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:0;color:#c9a96e;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;cursor:pointer}
+@media (max-width:640px){.ma-form{grid-template-columns:1fr}.ma-card{padding:20px}}

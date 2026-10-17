@@ -427,21 +427,7 @@
 
 <body>
 
-    <div class="topbar">
-        <div class="topbar-inner">
-            <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motors</em></a>
-            <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
-            <div class="nav-links">
-                <a href="{{ url_for('home') }}">Home</a>
-                <a href="{{ url_for('home') }}#services">Services</a>
-                <a href="{{ url_for('home') }}#available-cars">Cars</a>
-                <a href="{{ url_for('swap_car') }}">Swap Your Car</a>
-                <a href="{{ url_for('home') }}#about">About</a>
-                <a href="{{ url_for('home') }}#gallery">Gallery</a>
-                <a href="{{ url_for('home') }}#contact">Contact</a>
-            </div>
-        </div>
-    </div>
+    {% include '_nav.html' %}
 
     <div class="detail-layout">
 

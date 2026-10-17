@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-polish.css') }}?v=1">
 </head>
 
-<body class="admin-page">
+<body class="admin-page page-manage-admins">
     <div class="topbar">
         <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motors</em></a>
     </div>
@@ -74,6 +74,93 @@
 <span>Admin Panel &middot; Authorized personnel only</span>
 <a href="/">View public site &rarr;</a>
 </div></footer>
+
+<script id="ma-polish">
+(function () {
+  var wrap = document.querySelector('.admin-wrap') || document.body;
+  // 1) admin list
+  var you = null;
+  wrap.querySelectorAll('*').forEach(function (el) {
+    if (!you && el.children.length === 0 && el.textContent.trim().toLowerCase() === '(you)') you = el;
+  });
+  if (you) {
+    you.textContent = 'You';
+    you.classList.add('ma-you');
+    var row = you.parentElement;
+    var parent = row.parentElement;
+    var rows = Array.prototype.filter.call(parent.children, function (c) {
+      return c.tagName === row.tagName && c.className === row.className;
+    });
+    var list;
+    if (parent === wrap || parent === document.body) {
+      list = document.createElement('div');
+      parent.insertBefore(list, rows[0]);
+      rows.forEach(function (r) { list.appendChild(r); });
+    } else {
+      list = parent;
+    }
+    list.classList.add('ma-list');
+    var lab = document.createElement('div');
+    lab.className = 'ma-label';
+    lab.textContent = 'Administrators';
+    list.parentNode.insertBefore(lab, list);
+    rows.forEach(function (r) {
+      r.classList.add('ma-row');
+      var name = r.textContent.replace(/\(you\)|You/g, '').trim();
+      var av = document.createElement('span');
+      av.className = 'ma-avatar';
+      av.textContent = name.charAt(0);
+      r.insertBefore(av, r.firstChild);
+    });
+  }
+  // 2) add-admin form
+  var forms = Array.prototype.filter.call(document.querySelectorAll('form'), function (f) {
+    return f.querySelector('input[type=password]');
+  });
+  var form = forms[0];
+  if (form) {
+    form.classList.add('ma-form');
+    Array.prototype.slice.call(form.querySelectorAll('label')).forEach(function (l) {
+      if (l.parentElement === form) {
+        var nx = l.nextElementSibling;
+        var f = document.createElement('div');
+        f.className = 'ma-field';
+        form.insertBefore(f, l);
+        f.appendChild(l);
+        if (nx && /^(INPUT|SELECT|TEXTAREA)$/.test(nx.tagName)) f.appendChild(nx);
+      } else {
+        l.parentElement.classList.add('ma-field');
+      }
+    });
+    var u = form.querySelector('input[type=text]');
+    if (u && !u.placeholder) u.placeholder = 'Choose a username';
+    var pw = form.querySelector('input[type=password]');
+    if (!pw.placeholder) pw.placeholder = 'Create a password';
+    var w = document.createElement('div');
+    w.className = 'pw-wrap';
+    pw.parentNode.insertBefore(w, pw);
+    w.appendChild(pw);
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pw-eye';
+    b.textContent = 'Show';
+    b.addEventListener('click', function () {
+      var hidden = pw.type === 'password';
+      pw.type = hidden ? 'text' : 'password';
+      b.textContent = hidden ? 'Hide' : 'Show';
+    });
+    w.appendChild(b);
+    // card around heading + form
+    var h = form.previousElementSibling;
+    while (h && !/^H[1-6]$/.test(h.tagName)) h = h.previousElementSibling;
+    var card = document.createElement('div');
+    card.className = 'ma-card';
+    form.parentNode.insertBefore(card, h && h.parentNode === form.parentNode ? h : form);
+    if (h && h.parentNode === form.parentNode) card.appendChild(h);
+    card.appendChild(form);
+  }
+})();
+</script>
 </body>
 
 </html>
