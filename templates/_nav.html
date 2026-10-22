@@ -1,12 +1,12 @@
 <div class="topbar site-nav">
     <div class="topbar-inner">
-        <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motors</em></a>
+        <a href="{{ url_for('home') }}" class="brand">{{ brand_html }}</a>
         <button class="hamburger" aria-label="Menu" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
         <div class="nav-links">
             <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('home') }}#services">Services</a>
             <a href="{{ url_for('home') }}#available-cars">Cars</a>
-            <a href="{{ url_for('swap_car') }}">Swap Your Car</a>
+            <a href="{{ url_for('swap_car') }}">Swap Car</a>
+            <a href="{{ url_for('home') }}#services">Services</a>
             <a href="{{ url_for('home') }}#about">About</a>
             <a href="{{ url_for('home') }}#gallery">Gallery</a>
             <a href="{{ url_for('home') }}#contact">Contact</a>

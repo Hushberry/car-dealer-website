@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PrimeDrive Motor — Buy, Rent & Swap Cars</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
+
+<meta name="description" content="Buy, sell, swap and rent quality cars. Browse available vehicles online.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ brand_name }}">
+<meta property="og:description" content="Browse quality cars, book a test drive, swap or sell yours - all with WhatsApp support.">
+<meta property="og:url" content="{{ request.url_root }}">
+<meta property="og:image" content="{{ url_for('static', filename='img/hero.jpg', _external=True, _scheme='https') }}">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body class="page-home">
@@ -214,11 +222,7 @@
                 {% if car["description"] %}
 
                 <p class="card-meta">
-                    {{ car["description"][:80] }}
-
-                    {% if car["description"]|length > 80 %}
-                    …
-                    {% endif %}
+                    {{ car["description"]|truncate(95, false, "…") }}
                 </p>
 
                 {% endif %}
@@ -350,16 +354,23 @@
                         <span class="label">Inspected Before Listing</span>
                     </div>
                     <div class="trust-item">
-                        <span class="num">24/7</span>
-                        <span class="label">Direct WhatsApp Access</span>
+                        <span class="num">Anytime</span>
+                        <span class="label">We Reply on WhatsApp</span>
                     </div>
                 </div>
             </div>
-            <img src="{{ url_for('static', filename='img/about.jpg') }}" alt="PrimeDrive Motors vehicle inventory">
+            <img src="{{ url_for('static', filename='img/about.jpg') }}" alt="{{ brand_name }} vehicle inventory">
         </div>
     </section>
 
-    <section id="contact" class="contact-section">
+    <section id="testimonials" class="testi" style="display:none">
+  <div class="container">
+    <p class="testi-eyebrow">Customer reviews</p>
+    <h2 class="testi-title">What our customers say</h2>
+    <div class="testi-grid"></div>
+  </div>
+</section>
+<section id="contact" class="contact-section">
         <div class="section-label" style="padding:0 0 8px;">Get In Touch</div>
         <h2 style="font-size:28px; font-weight:400; margin:0;">Visit, Call, or Message Us</h2>
 
@@ -447,7 +458,7 @@
         <div
             style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; max-width:1200px; margin:0 auto;">
             <div>
-                <div class="brand" style="font-size:16px; margin-bottom:8px;">PrimeDrive <em>Motors</em></div>
+                <div class="brand" style="font-size:16px; margin-bottom:8px;">{{ brand_html }}</div>
                 <p style="margin:0 0 12px; max-width:280px;">Buy, rent, or swap — quality cars, honestly presented.</p>
                 <div style="display:flex; gap:10px;">
                     <a href="{{ instagram }}" target="_blank" class="social-icon"
@@ -491,7 +502,7 @@
                         style="color:var(--muted); text-decoration:none;">Swap Your Car</a></p>
             </div>
         </div>
-        <p style="text-align:center; margin:32px 0 0; font-size:12px; color:#5A564F;">© 2026 PrimeDrive Motors. All rights
+        <p style="text-align:center; margin:32px 0 0; font-size:12px; color:#5A564F;">© 2026 {{ brand_name }}. All rights
             reserved.</p>
     </footer>
 
@@ -587,6 +598,131 @@
     swipe(el, function (d) { return el.querySelector('.g-' + (d === 'next' ? 'next' : 'prev')); });
     fade(el.querySelector('img'));
   });
+})();
+</script>
+
+<script id="dd-js">
+(function () {
+  if (!window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  var list = null, cur = null, hi = -1;
+  function close() { if (list) { list.remove(); list = null; } cur = null; }
+  function items() { return list ? list.querySelectorAll('li') : []; }
+  function mark(i) {
+    var it = items();
+    it.forEach(function (x) { x.classList.remove('hl'); });
+    hi = Math.max(0, Math.min(it.length - 1, i));
+    if (it[hi]) { it[hi].classList.add('hl'); it[hi].scrollIntoView({ block: 'nearest' }); }
+  }
+  function choose(i) {
+    if (!cur) return;
+    cur.selectedIndex = i;
+    cur.dispatchEvent(new Event('change', { bubbles: true }));
+    close();
+  }
+  function open(sel) {
+    close();
+    cur = sel;
+    list = document.createElement('ul');
+    list.className = 'dd-list';
+    Array.prototype.forEach.call(sel.options, function (o, i) {
+      var li = document.createElement('li');
+      li.textContent = o.text;
+      if (i === sel.selectedIndex) li.className = 'sel';
+      li.addEventListener('mousedown', function (e) { e.preventDefault(); });
+      li.addEventListener('click', function () { choose(i); });
+      li.addEventListener('mouseenter', function () { mark(i); });
+      list.appendChild(li);
+    });
+    document.body.appendChild(list);
+    var r = sel.getBoundingClientRect();
+    list.style.top = (r.bottom + window.scrollY + 6) + 'px';
+    list.style.left = (r.left + window.scrollX) + 'px';
+    list.style.minWidth = r.width + 'px';
+    mark(sel.selectedIndex);
+  }
+  document.querySelectorAll('.filters select').forEach(function (sel) {
+    sel.addEventListener('mousedown', function (e) {
+      e.preventDefault();
+      sel.focus();
+      (list && cur === sel) ? close() : open(sel);
+    });
+    sel.addEventListener('keydown', function (e) {
+      if (!list) {
+        if (['Enter', ' ', 'ArrowDown', 'ArrowUp'].indexOf(e.key) > -1) { e.preventDefault(); open(sel); }
+        return;
+      }
+      if (e.key === 'ArrowDown') { e.preventDefault(); mark(hi + 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); mark(hi - 1); }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(hi); }
+      else if (e.key === 'Escape' || e.key === 'Tab') { close(); }
+    });
+  });
+  document.addEventListener('mousedown', function (e) {
+    if (list && !list.contains(e.target) && e.target !== cur) close();
+  });
+  window.addEventListener('resize', close);
+})();
+</script>
+
+<script id="auction-cards-js">
+(function () {
+  fetch('/auctions.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (map) {
+    function money(n) { return '\u20a6' + Number(n).toLocaleString('en-NG'); }
+    function short(s) {
+      var d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60);
+      return d ? d + 'd ' + h + 'h left' : (h ? h + 'h ' + m + 'm left' : m + 'm left');
+    }
+    document.querySelectorAll('.card').forEach(function (card) {
+      var a = card.querySelector('.view-details-btn');
+      var m = a && (a.getAttribute('href') || '').match(/\/car\/(\d+)/);
+      var st = m && map[m[1]];
+      if (!st || !st.enabled) return;
+      var tags = card.querySelector('.card-tags');
+      if (tags) {
+        var t = document.createElement('span');
+        t.className = 'auction-tag';
+        t.textContent = st.ended ? 'Auction ended' : 'Auction';
+        tags.appendChild(t);
+      }
+      var price = card.querySelector('.price');
+      if (price) {
+        var line = document.createElement('div');
+        line.className = 'auction-line';
+        line.textContent = (st.count ? 'Current bid ' + money(st.current) : 'Starting bid ' + money(st.start)) +
+          (!st.ended && st.seconds_left !== null ? ' \u00b7 ' + short(st.seconds_left) : '');
+        price.after(line);
+      }
+    });
+  }).catch(function () {});
+})();
+</script>
+
+<script id="testimonials-js">
+(function () {
+  fetch('/testimonials.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (list) {
+    var box = document.getElementById('testimonials');
+    if (!box || !list.length) return;
+    var grid = box.querySelector('.testi-grid');
+    list.forEach(function (t) {
+      var c = document.createElement('div');
+      c.className = 'testi-card';
+      var s = document.createElement('div');
+      s.className = 'testi-stars';
+      s.textContent = '\u2605'.repeat(t.rating) + '\u2606'.repeat(5 - t.rating);
+      var q = document.createElement('p');
+      q.className = 'testi-quote';
+      q.textContent = t.quote;
+      var w = document.createElement('div');
+      w.className = 'testi-who';
+      var n = document.createElement('strong');
+      n.textContent = t.name;
+      w.appendChild(n);
+      if (t.detail) { var d = document.createElement('span'); d.textContent = t.detail; w.appendChild(d); }
+      c.appendChild(s); c.appendChild(q); c.appendChild(w);
+      grid.appendChild(c);
+    });
+    box.style.display = '';
+  }).catch(function () {});
 })();
 </script>
 </body>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testimonials &mdash; {{ brand_name }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-polish.css') }}?v=1">
+<style>
+.tm-sub{color:#9a9aa3;margin:0 0 22px;max-width:640px}
+.tm-card{background:#0e0e10;border:1px solid #26262a;border-top:2px solid rgba(201,169,110,.6);border-radius:12px;padding:22px 24px;margin:0 0 18px}
+.tm-grid{display:grid;grid-template-columns:1fr 1fr 120px;gap:14px}
+.tm-card label{display:block;margin:0 0 6px;font-size:11.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#c9a96e}
+.tm-card input[type=text],.tm-card select,.tm-card textarea{width:100%;box-sizing:border-box;padding:11px 12px;background:#131316;border:1px solid #2a2a2f;border-radius:8px;color:#f2f2f4;font-size:14.5px;color-scheme:dark}
+.tm-card textarea{min-height:100px;resize:vertical;margin-bottom:12px}
+.tm-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tm-check{display:flex;align-items:center;gap:8px;font-size:14px;color:#e8e8ea}
+.tm-item{display:flex;gap:16px;justify-content:space-between;align-items:flex-start;padding:16px 0;border-bottom:1px solid #1d1d20}
+.tm-item:last-child{border-bottom:0}
+.tm-stars{color:#c9a96e;letter-spacing:2px}
+.tm-quote{margin:6px 0;color:#e8e8ea;line-height:1.55}
+.tm-who{font-size:13px;color:#8a8a93}
+.tm-actions{display:flex;gap:8px;flex:none}
+.tm-actions form{margin:0}
+.tm-off{opacity:.5}
+@media (max-width:700px){.tm-grid{grid-template-columns:1fr}.tm-item{flex-direction:column}}
+</style>
+</head>
+<body class="admin-page">
+<div class="topbar"><div class="topbar-inner"><a href="/admin/dashboard" class="brand">{{ brand_html }}</a></div></div>
+<div class="page-wrap admin-wrap">
+  <a href="/admin/dashboard" class="back-link admin-back">&larr; Back to Dashboard</a>
+  <h1>Testimonials</h1>
+  <p class="tm-sub">Add real reviews from customers who agreed to be quoted. They show on your homepage in a &ldquo;What our customers say&rdquo; section, which stays hidden until at least one review is visible.</p>
+  {% for m in get_flashed_messages() %}<div class="flash-message">{{ m }}</div>{% endfor %}
+
+  <section class="tm-card">
+    <form method="post" action="{{ url_for('admin_testimonial_add') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="tm-grid">
+        <div><label>Customer name</label><input type="text" name="name" maxlength="60" required placeholder="e.g. Chinedu O."></div>
+        <div><label>Car or location (optional)</label><input type="text" name="detail" maxlength="80" placeholder="e.g. Bought a 2015 Lexus RX 350"></div>
+        <div><label>Rating</label><select name="rating"><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option></select></div>
+      </div>
+      <label style="margin-top:14px">Their review</label>
+      <textarea name="quote" maxlength="600" required placeholder="What the customer said, in their own words"></textarea>
+      <div class="tm-row">
+        <label class="tm-check" style="margin:0;text-transform:none;letter-spacing:0;color:#e8e8ea"><input type="checkbox" name="visible" checked> Show on the website</label>
+        <button type="submit" class="btn-gold">Add testimonial</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="tm-card">
+    {% if rows %}
+      {% for r in rows %}
+      <div class="tm-item {% if not r['visible'] %}tm-off{% endif %}">
+        <div>
+          <div class="tm-stars">{{ "&#9733;" * r['rating'] }}{{ "&#9734;" * (5 - r['rating']) }}</div>
+          <p class="tm-quote">&ldquo;{{ r['quote'] }}&rdquo;</p>
+          <div class="tm-who"><strong style="color:#f2f2f4">{{ r['name'] }}</strong>{% if r['detail'] %} &middot; {{ r['detail'] }}{% endif %}{% if not r['visible'] %} &middot; <em>hidden</em>{% endif %}</div>
+        </div>
+        <div class="tm-actions">
+          <form method="post" action="{{ url_for('admin_testimonial_toggle', tid=r['id']) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="btn-outline">{% if r['visible'] %}Hide{% else %}Show{% endif %}</button></form>
+          <form method="post" action="{{ url_for('admin_testimonial_delete', tid=r['id']) }}" onsubmit="return confirm('Delete this testimonial?');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit" class="btn-outline danger">Delete</button></form>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p style="color:#8a8a93;margin:0">No testimonials yet. Add your first one above.</p>
+    {% endif %}
+  </section>
+</div>
+<footer class="admin-footer"><div class="admin-footer-inner">
+<span class="af-brand">{{ brand_html }}</span>
+<span>Admin Panel &middot; Authorized personnel only</span>
+<a href="/">View public site &rarr;</a>
+</div></footer>
+</body>
+</html>

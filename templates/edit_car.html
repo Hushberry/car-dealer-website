@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Edit Car — PrimeDrive Motors</title>
+    <title>Edit Car — {{ brand_name }}</title>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
@@ -154,7 +154,7 @@
     <div class="topbar">
 
         <a href="{{ url_for('home') }}" class="brand">
-            PrimeDrive <em>Motors</em>
+            {{ brand_html }}
         </a>
 
     </div>
@@ -711,7 +711,7 @@
 
 
 <footer class="admin-footer"><div class="admin-footer-inner">
-<span class="af-brand">PrimeDrive <em>Motors</em></span>
+<span class="af-brand">{{ brand_html }}</span>
 <span>Admin Panel &middot; Authorized personnel only</span>
 <a href="/">View public site &rarr;</a>
 </div></footer>

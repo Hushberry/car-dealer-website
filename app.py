@@ -972,5 +972,326 @@ def sell_car():
         dealer_address=DEALER_ADDRESS
     )
 
+
+# ======================== AUCTIONS ========================
+from flask import jsonify
+AUCTION_MIN_INCREMENT = 50000
+
+
+def _now_lagos():
+    return datetime.utcnow() + timedelta(hours=1)
+
+
+def _lagos_str(ts):
+    try:
+        return (datetime.strptime(ts, "%Y-%m-%d %H:%M:%S") + timedelta(hours=1)).strftime("%d %b %Y, %H:%M")
+    except Exception:
+        return ts or ""
+
+
+def ensure_auction_schema():
+    conn = sqlite3.connect("database.db")
+    cols = [r[1] for r in conn.execute("PRAGMA table_info(cars)")]
+    for name, ddl in (("auction_enabled", "INTEGER DEFAULT 0"), ("auction_start", "INTEGER"),
+                      ("auction_end", "TEXT"), ("auction_closed", "INTEGER DEFAULT 0")):
+        if name not in cols:
+            conn.execute("ALTER TABLE cars ADD COLUMN %s %s" % (name, ddl))
+    conn.execute("CREATE TABLE IF NOT EXISTS bids (id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                 "car_id INTEGER NOT NULL, name TEXT NOT NULL, phone TEXT NOT NULL, "
+                 "amount INTEGER NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP)")
+    conn.commit()
+    conn.close()
+
+
+ensure_auction_schema()
+
+
+def _auction_state(conn, car):
+    if not car["auction_enabled"]:
+        return {"enabled": False}
+    top = conn.execute("SELECT MAX(amount) AS m, COUNT(*) AS c FROM bids WHERE car_id = ?", (car["id"],)).fetchone()
+    start = car["auction_start"] or 0
+    current = top["m"] or 0
+    count = top["c"] or 0
+    min_next = start if count == 0 else current + AUCTION_MIN_INCREMENT
+    ended = bool(car["auction_closed"]) or bool(car["sold"])
+    seconds_left = None
+    if car["auction_end"]:
+        try:
+            end = datetime.strptime(car["auction_end"], "%Y-%m-%dT%H:%M")
+            seconds_left = int((end - _now_lagos()).total_seconds())
+            if seconds_left <= 0:
+                seconds_left = 0
+                ended = True
+        except ValueError:
+            pass
+    return {"enabled": True, "ended": ended, "start": start, "current": current, "count": count,
+            "min_next": min_next, "seconds_left": seconds_left, "increment": AUCTION_MIN_INCREMENT}
+
+
+@app.route("/car/<int:car_id>/auction.json")
+def auction_json(car_id):
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row
+    car = conn.execute("SELECT * FROM cars WHERE id = ?", (car_id,)).fetchone()
+    data = {"enabled": False} if car is None else _auction_state(conn, car)
+    conn.close()
+    return jsonify(data)
+
+
+@app.route("/auctions.json")
+def auctions_json():
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row
+    out = {}
+    for car in conn.execute("SELECT * FROM cars WHERE auction_enabled = 1").fetchall():
+        out[str(car["id"])] = _auction_state(conn, car)
+    conn.close()
+    return jsonify(out)
+
+
+@app.route("/car/<int:car_id>/bid", methods=["POST"])
+def place_bid(car_id):
+    name = request.form.get("name", "").strip()[:60]
+    phone = request.form.get("phone", "").strip()[:20]
+    raw = request.form.get("amount", "").replace(",", "").replace("\u20a6", "").strip()
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row
+    car = conn.execute("SELECT * FROM cars WHERE id = ?", (car_id,)).fetchone()
+    if car is None:
+        conn.close()
+        return "Car not found", 404
+    back = redirect(url_for("car_detail", car_id=car_id) + "#auction")
+    st = _auction_state(conn, car)
+    if not st["enabled"] or st["ended"]:
+        conn.close()
+        flash("This auction is not open for bidding.")
+        return back
+    if len(name) < 2 or len(phone.replace(" ", "")) < 7:
+        conn.close()
+        flash("Please enter your name and a valid phone number.")
+        return back
+    try:
+        amount = int(raw)
+    except ValueError:
+        conn.close()
+        flash("Please enter your bid as a number.")
+        return back
+    if amount < st["min_next"] or amount > 10 ** 12:
+        conn.close()
+        flash("Your bid must be at least \u20a6{:,}.".format(st["min_next"]))
+        return back
+    conn.execute("INSERT INTO bids (car_id, name, phone, amount) VALUES (?, ?, ?, ?)", (car_id, name, phone, amount))
+    conn.commit()
+    conn.close()
+    flash("Bid of \u20a6{:,} placed! The dealer will contact the highest bidder when the auction ends.".format(amount))
+    return back
+
+
+@app.route("/admin/auctions")
+def admin_auctions():
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row
+    items = []
+    for car in conn.execute("SELECT * FROM cars ORDER BY id DESC").fetchall():
+        rows = conn.execute("SELECT * FROM bids WHERE car_id = ? ORDER BY amount DESC, id ASC", (car["id"],)).fetchall()
+        bids = [{"name": b["name"], "phone": b["phone"], "amount": b["amount"], "when": _lagos_str(b["created_at"])} for b in rows]
+        items.append({"car": car, "bids": bids, "state": _auction_state(conn, car)})
+    conn.close()
+    return render_template("admin_auctions.html", items=items, min_inc=AUCTION_MIN_INCREMENT)
+
+
+@app.route("/admin/auction/<int:car_id>/save", methods=["POST"])
+def admin_auction_save(car_id):
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+    enabled = 1 if request.form.get("enabled") else 0
+    try:
+        start = int(request.form.get("start", "0").replace(",", "").strip() or 0)
+    except ValueError:
+        start = 0
+    end = request.form.get("end", "").strip()
+    if end:
+        try:
+            datetime.strptime(end, "%Y-%m-%dT%H:%M")
+        except ValueError:
+            flash("That end date and time was not valid.")
+            return redirect(url_for("admin_auctions"))
+    conn = sqlite3.connect("database.db")
+    conn.execute("UPDATE cars SET auction_enabled = ?, auction_start = ?, auction_end = ?, auction_closed = 0 WHERE id = ?",
+                 (enabled, start, end or None, car_id))
+    conn.commit()
+    conn.close()
+    flash("Auction settings saved.")
+    return redirect(url_for("admin_auctions"))
+
+
+@app.route("/admin/auction/<int:car_id>/close", methods=["POST"])
+def admin_auction_close(car_id):
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+    conn = sqlite3.connect("database.db")
+    conn.execute("UPDATE cars SET auction_closed = 1 WHERE id = ?", (car_id,))
+    conn.commit()
+    conn.close()
+    flash("Auction closed.")
+    return redirect(url_for("admin_auctions"))
+# ====================== END AUCTIONS ======================
+
+
+# ======================== BRAND + ALERTS ========================
+import re
+import smtplib
+import threading
+from email.message import EmailMessage
+from markupsafe import Markup
+
+BRAND_NAME = os.getenv("BRAND_NAME", "PrimeDrive Motors").strip() or "PrimeDrive Motors"
+
+
+@app.context_processor
+def inject_brand():
+    parts = BRAND_NAME.split(" ", 1)
+    if len(parts) == 2:
+        html = Markup("%s <em>%s</em>") % (parts[0], parts[1])
+    else:
+        html = Markup("%s") % parts[0]
+    return {"brand_name": BRAND_NAME, "brand_html": html}
+
+
+def _send_email(subject, body):
+    host = os.getenv("SMTP_HOST", "smtp.gmail.com")
+    port = int(os.getenv("SMTP_PORT", "587"))
+    user = os.getenv("SMTP_USER", "")
+    pwd = os.getenv("SMTP_PASS", "")
+    to = os.getenv("ALERT_EMAIL_TO", user)
+    if not (user and pwd and to):
+        return
+    try:
+        msg = EmailMessage()
+        msg["Subject"] = subject
+        msg["From"] = user
+        msg["To"] = to
+        msg.set_content(body)
+        with smtplib.SMTP(host, port, timeout=15) as s:
+            s.starttls()
+            s.login(user, pwd)
+            s.send_message(msg)
+    except Exception as e:
+        print("alert email failed:", e)
+
+
+_ALERT_LABELS = (("bid", "New bid"), ("inquir", "New inquiry"), ("book", "New booking"),
+                 ("swap", "New swap request"), ("sell", "New sell request"))
+
+
+@app.after_request
+def lead_alerts(response):
+    try:
+        p = request.path.lower()
+        if (request.method == "POST" and 300 <= response.status_code < 400
+                and not p.startswith("/admin") and "login" not in p and "password" not in p):
+            label = next((l for k, l in _ALERT_LABELS if k in p), "New form submission")
+            lines = []
+            for k, v in request.form.items():
+                if k.lower() == "csrf_token" or "pass" in k.lower():
+                    continue
+                lines.append("%s: %s" % (k.replace("_", " ").title(), v))
+            m = re.search(r"/car/(\d+)", p)
+            if m:
+                lines.append("Car page: " + request.url_root.rstrip("/") + "/car/" + m.group(1))
+            body = "\n".join(lines) or "A visitor submitted a form."
+            threading.Thread(target=_send_email, args=("%s - %s" % (label, BRAND_NAME), body), daemon=True).start()
+    except Exception as e:
+        print("lead alert error:", e)
+    return response
+# ====================== END BRAND + ALERTS ======================
+
+
+# ======================== TESTIMONIALS ========================
+from flask import jsonify
+
+
+def ensure_testimonial_schema():
+    conn = sqlite3.connect("database.db")
+    conn.execute("CREATE TABLE IF NOT EXISTS testimonials (id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                 "name TEXT NOT NULL, detail TEXT, rating INTEGER DEFAULT 5, quote TEXT NOT NULL, "
+                 "visible INTEGER DEFAULT 1, created_at TEXT DEFAULT CURRENT_TIMESTAMP)")
+    conn.commit()
+    conn.close()
+
+
+ensure_testimonial_schema()
+
+
+@app.route("/testimonials.json")
+def testimonials_json():
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute("SELECT name, detail, rating, quote FROM testimonials WHERE visible = 1 ORDER BY id DESC LIMIT 12").fetchall()
+    conn.close()
+    return jsonify([dict(r) for r in rows])
+
+
+@app.route("/admin/testimonials")
+def admin_testimonials():
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute("SELECT * FROM testimonials ORDER BY id DESC").fetchall()
+    conn.close()
+    return render_template("admin_testimonials.html", rows=rows)
+
+
+@app.route("/admin/testimonials/add", methods=["POST"])
+def admin_testimonial_add():
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+    name = request.form.get("name", "").strip()[:60]
+    detail = request.form.get("detail", "").strip()[:80]
+    quote = request.form.get("quote", "").strip()[:600]
+    try:
+        rating = max(1, min(5, int(request.form.get("rating", "5"))))
+    except ValueError:
+        rating = 5
+    visible = 1 if request.form.get("visible") else 0
+    if len(name) < 2 or len(quote) < 10:
+        flash("Please enter a name and a review of at least 10 characters.")
+        return redirect(url_for("admin_testimonials"))
+    conn = sqlite3.connect("database.db")
+    conn.execute("INSERT INTO testimonials (name, detail, rating, quote, visible) VALUES (?, ?, ?, ?, ?)",
+                 (name, detail, rating, quote, visible))
+    conn.commit()
+    conn.close()
+    flash("Testimonial added.")
+    return redirect(url_for("admin_testimonials"))
+
+
+@app.route("/admin/testimonials/<int:tid>/toggle", methods=["POST"])
+def admin_testimonial_toggle(tid):
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+    conn = sqlite3.connect("database.db")
+    conn.execute("UPDATE testimonials SET visible = 1 - COALESCE(visible, 0) WHERE id = ?", (tid,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("admin_testimonials"))
+
+
+@app.route("/admin/testimonials/<int:tid>/delete", methods=["POST"])
+def admin_testimonial_delete(tid):
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+    conn = sqlite3.connect("database.db")
+    conn.execute("DELETE FROM testimonials WHERE id = ?", (tid,))
+    conn.commit()
+    conn.close()
+    flash("Testimonial deleted.")
+    return redirect(url_for("admin_testimonials"))
+# ====================== END TESTIMONIALS ======================
+
 if __name__ == "__main__":
     app.run(debug=False)

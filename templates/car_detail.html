@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ car["year"] }} {{ car["make"] }} {{ car["model"] }} — PrimeDrive Motors</title>
+    <title>{{ car["year"] }} {{ car["make"] }} {{ car["model"] }} — {{ brand_name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         .back-link {
@@ -423,6 +423,15 @@
             .collapsible-form .form-block > * { grid-column: 1 !important; grid-row: auto !important; }
         }
     </style>
+
+<meta name="description" content="{{ (car["description"] or "")[:155] }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ brand_name }}">
+<meta property="og:title" content="{{ car["year"] }} {{ car["make"] }} {{ car["model"] }} - &#8358;{{ "{:,}".format(car["price"]) }}">
+<meta property="og:description" content="{{ (car["description"] or "Available now at " ~ brand_name)[:155] }}">
+<meta property="og:url" content="{{ request.url }}">
+{% set _p = photos[0] if photos else none %}{% if _p %}{% set _f = _p if _p is string else (_p["filename"] if _p["filename"] is defined else _p[0]) %}<meta property="og:image" content="{{ url_for('static', filename='uploads/' ~ _f, _external=True, _scheme='https') }}">{% endif %}
+<meta name="twitter:card" content="summary_large_image">
 </head>
 
 <body>
@@ -595,7 +604,7 @@
                     target="_blank" class="btn-whatsapp">💬 WhatsApp Deal</a>
                 <a href="tel:{{ phone_number }}" class="btn-call">📞 Call Dealership</a>
 
-                <p class="price-note">Price excludes registration fees.<br>Verified by PrimeDrive Motors.</p>
+                <p class="price-note">Price excludes registration fees.<br>Verified by {{ brand_name }}.</p>
             </div>
 
             <div class="trust-card">
@@ -623,7 +632,7 @@
         <div
             style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; max-width:1200px; margin:0 auto;">
             <div>
-                <div class="brand" style="font-size:16px; margin-bottom:8px;">PrimeDrive <em>Motors</em></div>
+                <div class="brand" style="font-size:16px; margin-bottom:8px;">{{ brand_html }}</div>
                 <p style="margin:0 0 12px; max-width:280px;">Buy, rent, or swap — quality cars, honestly presented.</p>
                 <div style="display:flex; gap:10px;">
                     <a href="{{ instagram }}" target="_blank" class="social-icon"
@@ -667,7 +676,7 @@
                         style="color:var(--muted); text-decoration:none;">Swap Your Car</a></p>
             </div>
         </div>
-        <p style="text-align:center; margin:32px 0 0; font-size:12px; color:#5A564F;">© 2026 PrimeDrive Motors. All rights
+        <p style="text-align:center; margin:32px 0 0; font-size:12px; color:#5A564F;">© 2026 {{ brand_name }}. All rights
             reserved.</p>
     </footer>
 
@@ -766,7 +775,7 @@
     setTimeout(function () { t.remove(); }, 2300);
   }
   b.addEventListener('click', function () {
-    var data = { title: document.title, text: 'Check out this car at PrimeDrive Motors', url: location.href };
+    var data = { title: document.title, text: 'Check out this car at {{ brand_name }}', url: location.href };
     if (navigator.share) {
       navigator.share(data).catch(function () {});
     } else if (navigator.clipboard) {
@@ -775,6 +784,74 @@
       window.prompt('Copy this link:', location.href);
     }
   });
+})();
+</script>
+
+<script id="auction-js">
+(function () {
+  var side = document.querySelector('.detail-sidebar');
+  if (!side) return;
+  var CAR = {{ car["id"] }}, CSRF = "{{ csrf_token() }}";
+  var panel = document.createElement('div');
+  panel.className = 'auction-panel';
+  panel.id = 'auction';
+  panel.style.display = 'none';
+  var pc = side.querySelector('.price-card');
+  if (pc) pc.after(panel); else side.insertBefore(panel, side.firstChild);
+  var left = null, ended = null;
+  function money(n) { return '\u20a6' + Number(n).toLocaleString('en-NG'); }
+  function clock(s) {
+    var d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
+    return (d ? d + 'd ' : '') + ((h || d) ? h + 'h ' : '') + m + 'm ' + x + 's';
+  }
+  function build(st) {
+    ended = st.ended;
+    left = st.seconds_left;
+    var h = '<div class="au-top"><span class="au-dot' + (st.ended ? ' off' : '') + '"></span>' + (st.ended ? 'Auction ended' : 'Live auction') + '</div>';
+    h += '<div class="au-label" id="au-label"></div><div class="au-amount" id="au-amount"></div>';
+    h += '<div class="au-meta"><span id="au-count"></span>' + (left !== null && !st.ended ? '<span id="au-clock"></span>' : '') + '</div>';
+    if (st.ended) {
+      h += '<p class="au-note">' + (st.count ? 'Bidding is closed. The dealer will contact the highest bidder.' : 'Bidding is closed. No bids were placed.') + '</p>';
+    } else {
+      h += '<form method="post" action="/car/' + CAR + '/bid" class="au-form">' +
+        '<input type="hidden" name="csrf_token" value="' + CSRF + '">' +
+        '<input name="name" placeholder="Your name" required maxlength="60">' +
+        '<input name="phone" type="tel" placeholder="Phone number" required maxlength="20">' +
+        '<input name="amount" id="au-input" inputmode="numeric" placeholder="" required>' +
+        '<button type="submit">Place bid</button></form>' +
+        '<p class="au-note">Minimum raise ' + money(st.increment) + '. Bids are confirmed by the dealer, who will call the highest bidder when the auction ends.</p>';
+    }
+    panel.innerHTML = h;
+    panel.style.display = '';
+    update(st);
+  }
+  function update(st) {
+    var lab = document.getElementById('au-label'), amt = document.getElementById('au-amount');
+    if (!lab) return;
+    lab.textContent = st.count ? 'Current bid' : 'Starting bid';
+    amt.textContent = money(st.count ? st.current : st.start);
+    document.getElementById('au-count').textContent = st.count + (st.count === 1 ? ' bid' : ' bids');
+    var inp = document.getElementById('au-input');
+    if (inp) inp.placeholder = 'Your bid (min ' + money(st.min_next) + ')';
+    left = st.seconds_left;
+  }
+  function load(first) {
+    fetch('/car/' + CAR + '/auction.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (st) {
+      if (!st.enabled) { panel.style.display = 'none'; return; }
+      if (first || ended !== st.ended) build(st); else update(st);
+    }).catch(function () {});
+  }
+  setInterval(function () {
+    var c = document.getElementById('au-clock');
+    if (c && left !== null) {
+      if (left > 0) left -= 1;
+      c.textContent = left > 0 ? clock(left) + ' left' : 'Ending...';
+      if (left === 0) load(false);
+    }
+  }, 1000);
+  setInterval(function () { load(false); }, 30000);
+  load(true);
+  if (location.hash === '#auction') setTimeout(function () { panel.scrollIntoView({ block: 'center' }); }, 600);
 })();
 </script>
 </body>

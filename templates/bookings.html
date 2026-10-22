@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bookings — PrimeDrive Motors</title>
+    <title>Bookings — {{ brand_name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         .page-wrap {
@@ -34,7 +34,7 @@
 
 <body class="admin-page">
     <div class="topbar">
-        <a href="{{ url_for('home') }}" class="brand">PrimeDrive <em>Motors</em></a>
+        <a href="{{ url_for('home') }}" class="brand">{{ brand_html }}</a>
     </div>
     <div class="page-wrap admin-wrap">
         <a href="{{ url_for('admin_dashboard') }}" class="back-link admin-back">← Back to Dashboard</a>
@@ -55,7 +55,7 @@
     </div>
 
 <footer class="admin-footer"><div class="admin-footer-inner">
-<span class="af-brand">PrimeDrive <em>Motors</em></span>
+<span class="af-brand">{{ brand_html }}</span>
 <span>Admin Panel &middot; Authorized personnel only</span>
 <a href="/">View public site &rarr;</a>
 </div></footer>

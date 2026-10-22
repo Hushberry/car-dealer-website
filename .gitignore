@@ -18,3 +18,4 @@ database.db.bak
 *.bak5
 *.bak6
 *.bak7
+database.db.bak*
