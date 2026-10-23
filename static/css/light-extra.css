@@ -230,3 +230,83 @@ html[data-theme="light"]{--cd-card:#ffffff;--cd-border:#e8e1d2;--cd-text:#16130c
 /* Sticky filter */
 .filter-sticky{position:sticky !important;top:76px;z-index:60;background:var(--cd-card) !important;border:1px solid var(--cd-border) !important;border-radius:16px !important;padding:14px 18px !important;box-shadow:0 12px 32px rgba(0,0,0,.16);backdrop-filter:blur(10px);margin-bottom:28px !important}
 @media (max-width:700px){.filter-sticky{top:68px;padding:10px 12px !important;border-radius:12px !important}}
+
+/* ===== Cars page: working grid ===== */
+.page-cars .grid{display:grid !important;grid-template-columns:repeat(auto-fill,minmax(330px,1fr)) !important;gap:28px !important;align-items:stretch !important}
+.page-cars .card{display:flex !important;flex-direction:column !important;height:100%;border-radius:18px !important;overflow:hidden;background:var(--cd-card) !important;border:1px solid var(--cd-border) !important;transition:transform .3s,border-color .3s,box-shadow .3s}
+.page-cars .card:hover{transform:translateY(-4px);border-color:var(--cd-gold) !important;box-shadow:0 18px 40px rgba(0,0,0,.16)}
+.page-cars .card-photo{aspect-ratio:16/10;height:auto !important;overflow:hidden;flex:none}
+.page-cars .card-photo img{width:100% !important;height:100% !important;object-fit:cover}
+.page-cars .card-body{display:flex !important;flex-direction:column !important;flex:1 !important;padding:22px 22px 24px !important}
+.page-cars .card-body h2,.page-cars .card-body h3{font-size:18px !important;line-height:1.3 !important;min-height:2.6em;margin:12px 0 8px !important;text-transform:none !important;letter-spacing:0 !important;font-weight:600 !important;color:var(--cd-text) !important}
+.page-cars .price{font-size:21px !important;font-weight:600 !important;color:var(--cd-gold-ink) !important;margin:0 0 14px !important}
+
+/* three specs in one row */
+.page-cars .card .spec-grid{display:grid !important;grid-template-columns:repeat(3,1fr) !important;gap:8px !important;margin:6px 0 16px !important;border:none !important}
+.page-cars .card .spec{padding:10px 8px !important;border:1px solid var(--cd-border) !important;border-radius:10px !important;text-align:center;min-width:0}
+.page-cars .card .spec *{margin:0 !important}
+.page-cars .card .spec{font-size:13px;font-weight:600;color:var(--cd-text) !important;line-height:1.35;overflow-wrap:anywhere}
+.page-cars .card .spec small,.page-cars .card .spec span:first-child{display:block;font-size:9.5px !important;letter-spacing:1.6px;text-transform:uppercase;color:var(--cd-muted) !important;font-weight:700 !important;margin-bottom:4px !important}
+
+/* description + button */
+.page-cars .card-body p{font-size:14px !important;line-height:1.65 !important;color:var(--cd-muted) !important;font-weight:500 !important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:0 0 18px !important}
+.page-cars .view-details-btn{margin-top:auto !important}
+@media (max-width:700px){.page-cars .grid{grid-template-columns:1fr !important;gap:22px !important}}
+
+/* Cars page: 4 per row */
+.page-cars .grid{grid-template-columns:repeat(4,minmax(0,1fr)) !important;gap:22px !important;max-width:1360px;margin-left:auto !important;margin-right:auto !important}
+.page-cars .card-body{padding:16px 16px 18px !important}
+.page-cars .card-body h2,.page-cars .card-body h3{font-size:15.5px !important;margin:10px 0 6px !important}
+.page-cars .price{font-size:18px !important;margin-bottom:12px !important}
+.page-cars .card .spec-grid{gap:6px !important;margin:4px 0 12px !important}
+.page-cars .card .spec{padding:8px 4px !important;font-size:11.5px !important}
+.page-cars .card .spec small,.page-cars .card .spec span:first-child{font-size:8.5px !important;letter-spacing:1.2px !important}
+.page-cars .card-body p{font-size:13px !important;margin-bottom:14px !important}
+.page-cars .view-details-btn{padding:11px 14px !important;font-size:11px !important}
+.page-cars .year-chip,.page-cars .body-chip,.page-cars .cond-tag{font-size:10.5px !important;padding:4px 9px !important}
+@media (max-width:1199px){.page-cars .grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important}}
+@media (max-width:899px){.page-cars .grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:16px !important}}
+@media (max-width:560px){.page-cars .grid{grid-template-columns:1fr !important}}
+
+/* Cars 4 per row */
+.page-cars .grid{grid-template-columns:repeat(4,minmax(0,1fr)) !important;gap:20px !important;max-width:1360px;margin-left:auto !important;margin-right:auto !important}
+.page-cars .card-body{padding:16px !important}
+.page-cars .card-body h2,.page-cars .card-body h3{font-size:15.5px !important;min-height:2.4em;margin:10px 0 6px !important}
+.page-cars .price{font-size:18px !important;margin-bottom:12px !important}
+.page-cars .card .spec-grid{gap:6px !important}
+.page-cars .card .spec{padding:8px 4px !important;font-size:11.5px !important}
+.page-cars .card-body p{font-size:13px !important}
+.page-cars .view-details-btn{padding:11px 14px !important;font-size:11px !important}
+@media (max-width:1199px){.page-cars .grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important}}
+@media (max-width:899px){.page-cars .grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important}}
+@media (max-width:560px){.page-cars .grid{grid-template-columns:1fr !important}}
+
+/* Cars 4 per row v2 */
+@media (min-width:900px){
+  html body.page-cars .grid{grid-template-columns:repeat(4,minmax(0,1fr)) !important;gap:16px !important;margin-left:24px !important;margin-right:24px !important;max-width:none}
+}
+@media (min-width:1500px){
+  html body.page-cars .grid{max-width:1400px;margin-left:auto !important;margin-right:auto !important}
+}
+@media (min-width:600px) and (max-width:899px){
+  html body.page-cars .grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:16px !important}
+}
+@media (min-width:900px) and (max-width:1250px){
+  html body.page-cars .card-body{padding:12px 12px 14px !important}
+  html body.page-cars .card-body h2,html body.page-cars .card-body h3{font-size:14.5px !important;min-height:2.4em}
+  html body.page-cars .price{font-size:16.5px !important;margin-bottom:10px !important}
+  html body.page-cars .card .spec-grid{gap:4px !important}
+  html body.page-cars .card .spec{padding:6px 2px !important;font-size:10.5px !important}
+  html body.page-cars .card-body p{font-size:12.5px !important}
+  html body.page-cars .view-details-btn{padding:9px 10px !important;font-size:10.5px !important;letter-spacing:1px !important}
+}
+
+/* Cars shorter cards */
+html body.page-cars .card-photo{aspect-ratio:16/9 !important}
+html body.page-cars .card-body{padding:12px 14px 14px !important}
+html body.page-cars .card-body h2,html body.page-cars .card-body h3{min-height:0 !important;margin:8px 0 4px !important;line-height:1.25 !important}
+html body.page-cars .price{margin:0 0 8px !important}
+html body.page-cars .card .spec-grid{margin:0 0 10px !important}
+html body.page-cars .card-body .card-meta,html body.page-cars .card-body p{display:none !important}
+html body.page-cars .view-details-btn{margin-top:0 !important;padding:9px 12px !important}
+html body.page-cars .auction-line{margin:-4px 0 6px !important}
