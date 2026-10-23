@@ -4,3 +4,31 @@ html[data-theme="light"] .st-card h3{color:#16130c}
 html[data-theme="light"] .st-card p{color:#5a5a62}
 html[data-theme="light"] .st-ico{background:#f6edd9;color:#9a7733}
 html[data-theme="light"] .services-teaser .st-sub{color:#5a5a62}
+
+/* Luxury hero */
+.hero-banner{overflow:hidden !important;min-height:clamp(540px,80vh,760px) !important;display:flex !important;align-items:center !important}
+.hero-banner .hero-content{text-align:center;max-width:860px;margin:0 auto;padding:90px 24px 70px;position:relative;z-index:3}
+.hero-overlay{background:linear-gradient(180deg,rgba(5,5,6,.62) 0%,rgba(5,5,6,.38) 45%,rgba(5,5,6,.9) 100%) !important}
+.hero-slide.active{animation:heroZoom 16s ease-out forwards}
+@keyframes heroZoom{from{transform:scale(1)}to{transform:scale(1.08)}}
+.hero-eyebrow{margin:0 0 22px !important;font-size:12px !important;letter-spacing:4px !important;text-transform:uppercase;color:#c9a96e !important;font-weight:600 !important}
+.hero-banner .hero-content h1{font-size:clamp(38px,5.4vw,70px) !important;line-height:1.06 !important;font-weight:500 !important;margin:0 0 22px !important;color:#fff !important;letter-spacing:-.5px}
+.hero-banner .hero-content h1 span{color:#c9a96e !important}
+.hero-lead{max-width:540px;margin:0 auto 38px !important;font-size:17px !important;line-height:1.75 !important;color:rgba(255,255,255,.82) !important;font-weight:400 !important}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.hero-btn{display:inline-block;padding:16px 36px;border-radius:999px;font-size:12.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:.3s;border:1px solid #c9a96e}
+.hero-btn.solid{background:#c9a96e;color:#0a0a0b !important}
+.hero-btn.solid:hover{background:#e6cd98;border-color:#e6cd98}
+.hero-btn.ghost{background:rgba(10,10,11,.25);color:#fff !important;backdrop-filter:blur(4px)}
+.hero-btn.ghost:hover{background:#c9a96e;color:#0a0a0b !important}
+.hero-trust{list-style:none;margin:56px auto 0;padding:26px 0 0;display:flex;justify-content:center;gap:12px 44px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.16);max-width:760px}
+.hero-trust li{font-size:11.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:600;position:relative;padding-left:16px}
+.hero-trust li::before{content:"";position:absolute;left:0;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:#c9a96e}
+@media (max-width:640px){
+  .hero-banner{min-height:520px !important}
+  .hero-banner .hero-content{padding:70px 20px 56px}
+  .hero-lead{font-size:15.5px !important;margin-bottom:28px !important}
+  .hero-btn{width:100%;box-sizing:border-box;text-align:center;padding:15px 20px}
+  .hero-btns{gap:12px}
+  .hero-trust{margin-top:38px;gap:10px 22px;justify-content:flex-start;padding-top:20px}
+}

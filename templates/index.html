@@ -46,35 +46,19 @@
         <!-- Hero content -->
         <div class="hero-content">
 
-            <h1>Drive Something <span>Exceptional.</span></h1>
-
-            <p>
-                Discover quality vehicles carefully selected for comfort, performance,
-                and your lifestyle. Your next car is waiting.
-            </p>
-
-            <div class="pill-row">
-
-                <a href="{{ url_for('cars_page', listing_type='sale') }}" class="pill">
-                    🚗 Buy a Car
-                </a>
-
-                <a href="{{ url_for('sell_car') }}" class="pill">
-                    💲 Sell Your Car
-                </a>
-
-                <a href="{{ url_for('swap_car') }}" class="pill">🔄 Swap a Car</a>
-
-                <a href="https://wa.me/{{ whatsapp_number }}?text=Hi%2C%20I%27d%20like%20to%20trade%20in%20my%20car."
-                    target="_blank" rel="noopener noreferrer" class="pill">
-                    🔄 Trade-In
-                </a>
-
-                <a href="{{ url_for('cars_page', listing_type='rent') }}" class="pill">
-                    🔑 Rent a Car
-                </a>
-
-            </div>
+            <p class="hero-eyebrow">{{ brand_name }} &middot; Premium Automobiles</p>
+        <h1>Drive Something <span>Exceptional.</span></h1>
+        <p class="hero-lead">Hand-selected vehicles, transparent pricing and a team that treats every client with care.</p>
+        <div class="hero-btns">
+            <a href="{{ url_for('cars_page') }}" class="hero-btn solid">Browse Collection</a>
+            <a href="{{ url_for('sell_car') }}" class="hero-btn ghost">Sell / Swap Your Car</a>
+        </div>
+        <ul class="hero-trust">
+            <li>Every car inspected</li>
+            <li>Verified documents</li>
+            <li>Transparent pricing</li>
+            <li>Trade-ins welcome</li>
+        </ul>
 
 
         </div>
