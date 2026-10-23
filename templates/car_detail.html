@@ -468,14 +468,14 @@
             {% if photos %}
             <div class="photo-stage">
                 <img id="mainPhotoBg" class="photo-bg" aria-hidden="true" src="{{ url_for('static', filename='uploads/' + photos[0]) }}" alt="">
-                <img id="mainPhoto" src="{{ url_for('static', filename='uploads/' + photos[0]) }}"
+                <img loading="lazy" decoding="async" id="mainPhoto" src="{{ url_for('static', filename='uploads/' + photos[0]) }}"
                     onclick="openLightbox(0)" alt="{{ car['make'] }} {{ car['model'] }}">
             </div>
 
             {% if photos|length > 1 %}
             <div class="thumb-strip">
                 {% for photo in photos %}
-                <img src="{{ url_for('static', filename='uploads/' + photo) }}"
+                <img loading="lazy" decoding="async" src="{{ url_for('static', filename='uploads/' + photo) }}"
                     class="{% if loop.index0 == 0 %}active-thumb{% endif %}"
                     onclick="setMainPhoto(this, {{ loop.index0 }})"
                     alt="{{ car['make'] }} {{ car['model'] }} photo {{ loop.index }}">
@@ -634,7 +634,7 @@
         <span onclick="closeLightbox()"
             style="position:absolute; top:24px; right:32px; color:var(--ivory); font-size:28px; cursor:pointer;">&times;</span>
         <span class="lightbox-arrow prev" onclick="prevPhoto()">‹</span>
-        <img id="lightbox-img" src="" style="max-width:85vw; max-height:80vh; border-radius:4px;">
+        <img loading="lazy" decoding="async" id="lightbox-img" src="" style="max-width:85vw; max-height:80vh; border-radius:4px;">
         <span class="lightbox-arrow next" onclick="nextPhoto()">›</span>
         <p id="lightbox-counter" style="color:var(--muted); font-size:13px; margin-top:16px;"></p>
     </div>

@@ -189,7 +189,7 @@
                 data-photos='{{ p["photos"]|tojson }}'
                 data-base="{{ url_for('static', filename='uploads/') }}" data-i="0">
                 <a href="{{ url_for('car_detail', car_id=p['car_id']) }}" class="g-link">
-                    <img src="{{ url_for('static', filename='uploads/' + p['filename']) }}"
+                    <img loading="lazy" decoding="async" src="{{ url_for('static', filename='uploads/' + p['filename']) }}"
                         alt="{{ p['make'] }} {{ p['model'] }}">
                     <div class="overlay">
                         <span>{{ p['year'] }} {{ p['make'] }} {{ p['model'] }}</span>
