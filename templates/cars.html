@@ -179,58 +179,7 @@
 
     
 
-    <footer
-        style="border-top:1px solid var(--hairline); margin-top:64px; padding:40px 48px; color:var(--muted); font-size:13px;">
-        <div
-            style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; max-width:1200px; margin:0 auto;">
-            <div>
-                <div class="brand" style="font-size:16px; margin-bottom:8px;">{{ brand_html }}</div>
-                <p style="margin:0 0 12px; max-width:280px;">Buy, rent, or swap — quality cars, honestly presented.</p>
-                <div style="display:flex; gap:10px;">
-                    <a href="{{ instagram }}" target="_blank" class="social-icon"
-                        style="color:var(--muted); text-decoration:none;" aria-label="Instagram">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.8">
-                            <rect x="2" y="2" width="20" height="20" rx="5" />
-                            <circle cx="12" cy="12" r="4" />
-                            <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" />
-                        </svg>
-                    </a>
-                    <a href="{{ facebook }}" target="_blank" class="social-icon"
-                        style="color:var(--muted); text-decoration:none;" aria-label="Facebook">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.8">
-                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                        </svg>
-                    </a>
-                    <a href="{{ whatsapp }}" target="_blank" class="social-icon"
-                        style="color:var(--muted); text-decoration:none;" aria-label="WhatsApp">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.8">
-                            <path d="M4 4l16 16M20 4L4 20" />
-                        </svg>
-                    </a>
-                </div>
-            </div>
-            <div>
-                <p style="margin:0 0 6px; color:var(--ivory);">Contact</p>
-                <p style="margin:0 0 4px;">{{ dealer_address }}</p>
-                <p style="margin:0;"><a href="tel:{{ phone_number }}"
-                        style="color:var(--muted); text-decoration:none;">{{ phone_number }}</a></p>
-            </div>
-            <div>
-                <p style="margin:0 0 6px; color:var(--ivory);">Browse</p>
-                <p style="margin:0 0 4px;"><a href="{{ url_for('home', listing_type='sale') }}"
-                        style="color:var(--muted); text-decoration:none;">For Sale</a></p>
-                <p style="margin:0 0 4px;"><a href="{{ url_for('home', listing_type='rent') }}"
-                        style="color:var(--muted); text-decoration:none;">For Rent</a></p>
-                <p style="margin:0;"><a href="{{ url_for('swap_car') }}"
-                        style="color:var(--muted); text-decoration:none;">Swap Your Car</a></p>
-            </div>
-        </div>
-        <p style="text-align:center; margin:32px 0 0; font-size:12px; color:#5A564F;">© 2026 {{ brand_name }}. All rights
-            reserved.</p>
-    </footer>
+    {% include '_footer.html' %}
 
     <a href="https://wa.me/{{ 2347066108664 }}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20your%20cars"
         target="_blank" rel="noopener noreferrer" class="sticky-whatsapp" aria-label="Chat on WhatsApp">

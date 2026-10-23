@@ -26,6 +26,7 @@
 .au-close{margin-top:14px}
 @media (max-width:760px){.au-form{grid-template-columns:1fr 1fr}.au-form .au-check,.au-form button{grid-column:1/-1}}
 </style>
+{% include '_theme_head.html' %}
 </head>
 <body class="admin-page">
 <div class="topbar"><div class="topbar-inner"><a href="/admin/dashboard" class="brand">{{ brand_html }}</a></div></div>
@@ -78,5 +79,6 @@
 <span>Admin Panel &middot; Authorized personnel only</span>
 <a href="/">View public site &rarr;</a>
 </div></footer>
+{% include '_theme_foot.html' %}
 </body>
 </html>

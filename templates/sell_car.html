@@ -9,6 +9,7 @@
 <body>
 
     {% include '_nav.html' %}
+{% include '_sellswap_tabs.html' %}
 <div class="page-back"><a href="{{ url_for('home') }}" class="back-pill">&larr; Back to Home</a></div>
 
     <div class="swap-hero">
@@ -85,22 +86,7 @@
         </div>
     </div>
 
-    <footer
-        style="border-top:1px solid var(--hairline); margin-top:64px; padding:40px 48px; color:var(--muted); font-size:13px;">
-        <div
-            style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; max-width:1200px; margin:0 auto;">
-            <div>
-                <div class="brand" style="font-size:16px; margin-bottom:8px;">{{ brand_html }}</div>
-                <p style="margin:0 0 12px; max-width:280px;">Buy, rent, or swap — quality cars, honestly presented.</p>
-            </div>
-            <div>
-                <p style="margin:0 0 6px; color:var(--ivory);">Contact</p>
-                <p style="margin:0 0 4px;">{{ dealer_address }}</p>
-                <p style="margin:0;"><a href="tel:{{ phone_number }}" style="color:var(--muted); text-decoration:none;">{{ phone_number }}</a></p>
-            </div>
-        </div>
-        <p style="text-align:center; margin:32px 0 0; font-size:12px; color:#5A564F;">© 2026 {{ brand_name }}. All rights reserved.</p>
-    </footer>
+    {% include '_footer.html' %}
 
 </body>
 </html>

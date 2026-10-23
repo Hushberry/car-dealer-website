@@ -1,0 +1,11 @@
+{% set _p = request.path %}
+<div class="ss-bar">
+  <div class="ss-inner">
+    <span class="ss-label">I want to</span>
+    <div class="ss-tabs" role="tablist">
+      <a href="/sell-car" class="ss-tab{% if 'sell' in _p %} active{% endif %}">Sell my car</a>
+      <a href="{{ url_for('swap_car') }}" class="ss-tab{% if 'swap' in _p %} active{% endif %}">Swap my car</a>
+    </div>
+    <span class="ss-hint">One simple form. Our team will get back to you.</span>
+  </div>
+</div>

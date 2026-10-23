@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Our Services &mdash; {{ brand_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
+
+<meta name="description" content="Buy, sell, swap and rent quality cars. Browse available vehicles online.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Our Services - {{ brand_name }}">
+<meta property="og:description" content="Browse quality cars, book a test drive, swap or sell yours - all with WhatsApp support.">
+<meta property="og:url" content="{{ request.url_root }}">
+<meta property="og:image" content="{{ url_for('static', filename='img/hero.jpg', _external=True, _scheme='https') }}">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="page-home page-services">
+
+    {% include '_nav.html' %}
+<main class="cp">
+<section class="cp-hero">
+  <div class="cp-hero-bg" style="background-image:url('{{ url_for('static', filename='img/hero3.jpg') }}')"></div>
+  <div class="cp-hero-inner">
+    <p class="cp-hero-eyebrow">Our Services</p>
+    <h1 class="cp-hero-title">Service That Matches the Cars</h1>
+    <div class="cp-hero-rule"></div>
+    <p class="cp-hero-lead">From the first enquiry to the day you drive away, we make every step clear, personal and well looked after.</p>
+  </div>
+</section>
+
+<section class="sv-grid">
+  <article class="sv-card">
+    <span class="sv-num">01</span>
+    <div class="cp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l2-6h14l2 6v5h-3v-2H6v2H3z"/><circle cx="7.5" cy="13.5" r="1"/><circle cx="16.5" cy="13.5" r="1"/></svg></div>
+    <h3>Vehicle Sales</h3>
+    <p>A curated inventory of thoroughly inspected vehicles, competitively priced and ready for immediate delivery.</p>
+    <a class="cp-link" href="{{ url_for('cars_page') }}">Browse cars &rarr;</a>
+  </article>
+  <article class="sv-card">
+    <span class="sv-num">02</span>
+    <div class="cp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l2-6h14l2 6v5h-3v-2H6v2H3z"/><circle cx="7.5" cy="13.5" r="1"/><circle cx="16.5" cy="13.5" r="1"/></svg></div>
+    <h3>We Purchase Vehicles</h3>
+    <p>Fair, prompt valuations for used, damaged, or non-running vehicles — including complimentary collection.</p>
+    <a class="cp-link" href="{{ url_for('cars_page') }}">Browse cars &rarr;</a>
+  </article>
+  <article class="sv-card">
+    <span class="sv-num">03</span>
+    <div class="cp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l2-6h14l2 6v5h-3v-2H6v2H3z"/><circle cx="7.5" cy="13.5" r="1"/><circle cx="16.5" cy="13.5" r="1"/></svg></div>
+    <h3>Vehicle Exchange</h3>
+    <p>Upgrade seamlessly through our exchange programme, with transparent valuation on your current vehicle.</p>
+    <a class="cp-link" href="{{ url_for('cars_page') }}">Browse cars &rarr;</a>
+  </article>
+  <article class="sv-card">
+    <span class="sv-num">04</span>
+    <div class="cp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14l-3-3M20 16H6l3 3"/></svg></div>
+    <h3>Trade Facilitation</h3>
+    <p>Structured trade arrangements designed around what you&#x27;re looking to achieve, not just what&#x27;s in stock.</p>
+    <a class="cp-link" href="{{ url_for('swap_car') }}">Swap your car &rarr;</a>
+  </article>
+  <article class="sv-card">
+    <span class="sv-num">05</span>
+    <div class="cp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="12" r="4"/><path d="M12 12h9M18 12v3M21 12v2"/></svg></div>
+    <h3>Vehicle Hire</h3>
+    <p>A well-maintained fleet available for corporate engagements, private events, and extended travel.</p>
+    <a class="cp-link" href="{{ url_for('cars_page', listing_type='rent') }}">See rentals &rarr;</a>
+  </article>
+  <article class="sv-card">
+    <span class="sv-num">06</span>
+    <div class="cp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></div>
+    <h3>Bespoke Sourcing</h3>
+    <p>Looking for something specific? We source and secure vehicles to your exact requirements.</p>
+    <a class="cp-link" href="{{ url_for('contact_page') }}">Enquire &rarr;</a>
+  </article>
+  <article class="sv-card">
+    <span class="sv-num">07</span>
+    <div class="cp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l2-6h14l2 6v5h-3v-2H6v2H3z"/><circle cx="7.5" cy="13.5" r="1"/><circle cx="16.5" cy="13.5" r="1"/></svg></div>
+    <h3>Vehicle Importation</h3>
+    <p>End-to-end importation of new and foreign-used vehicles, managed from origin to delivery.</p>
+    <a class="cp-link" href="{{ url_for('cars_page') }}">Browse cars &rarr;</a>
+  </article>
+  <article class="sv-card">
+    <span class="sv-num">08</span>
+    <div class="cp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></div>
+    <h3>Documentation &amp; Registration</h3>
+    <p>Complete handling of registration and paperwork, so ownership transfers without friction.</p>
+    <a class="cp-link" href="{{ url_for('contact_page') }}">Enquire &rarr;</a>
+  </article>
+  <article class="sv-card">
+    <span class="sv-num">09</span>
+    <div class="cp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></div>
+    <h3>Customization &amp; Upgrades</h3>
+    <p>Refine your vehicle&#x27;s performance and presentation through our professional customization service.</p>
+    <a class="cp-link" href="{{ url_for('contact_page') }}">Enquire &rarr;</a>
+  </article>
+</section>
+
+<section class="sv-process">
+  <p class="cp-eyebrow">How it works</p>
+  <h2>Simple from start to finish</h2>
+  <div class="sv-steps">
+    <div class="sv-step"><b>01</b><h4>Browse</h4><p>Explore the collection online, with full details and photos for every car.</p></div>
+    <div class="sv-step"><b>02</b><h4>Enquire</h4><p>Message us, call, or place a bid on cars listed for auction.</p></div>
+    <div class="sv-step"><b>03</b><h4>View</h4><p>Visit the showroom for a private viewing, by appointment.</p></div>
+    <div class="sv-step"><b>04</b><h4>Drive home</h4><p>Agree the details with our team and collect your car.</p></div>
+  </div>
+</section>
+
+</main>
+
+
+    {% include '_footer.html' %}
+
+    <a href="https://wa.me/{{ 2347066108664 }}?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20your%20cars"
+        target="_blank" rel="noopener noreferrer" class="sticky-whatsapp" aria-label="Chat on WhatsApp">
+        <svg viewBox="0 0 32 32" fill="white">
+            <path
+                d="M16 0C7.163 0 0 7.163 0 16c0 2.837.744 5.5 2.04 7.805L0 32l8.413-2.21A15.9 15.9 0 0 0 16 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.09c-2.49 0-4.82-.69-6.81-1.887l-.488-.29-5 1.31 1.337-4.87-.318-.5A13.07 13.07 0 0 1 2.91 16C2.91 8.775 8.775 2.91 16 2.91S29.09 8.775 29.09 16 23.225 29.09 16 29.09zm7.17-9.82c-.39-.195-2.31-1.14-2.67-1.27-.36-.13-.62-.195-.88.195-.26.39-1.01 1.27-1.24 1.53-.23.26-.46.29-.85.1-.39-.195-1.65-.61-3.14-1.94-1.16-1.04-1.95-2.32-2.18-2.71-.23-.39-.025-.6.17-.795.175-.175.39-.46.585-.69.195-.23.26-.39.39-.65.13-.26.065-.49-.03-.685-.1-.195-.88-2.12-1.2-2.9-.317-.76-.64-.655-.88-.667-.228-.01-.49-.012-.75-.012-.26 0-.685.097-1.045.487-.36.39-1.37 1.34-1.37 3.27 0 1.93 1.4 3.79 1.6 4.05.195.26 2.76 4.21 6.69 5.9.935.405 1.665.647 2.235.828.94.3 1.795.258 2.47.157.754-.113 2.31-.944 2.635-1.856.325-.912.325-1.69.228-1.856-.098-.166-.358-.26-.748-.456z" />
+        </svg>
+    </a>
+
+    <button id="backToTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+
+    
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

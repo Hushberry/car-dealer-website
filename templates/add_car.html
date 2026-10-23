@@ -126,6 +126,7 @@
 @media (max-width:640px){.topbar,header.topbar,.admin-topbar{padding:12px 16px !important}}
 </style>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-polish.css') }}?v=1">
+{% include '_theme_head.html' %}
 </head>
 
 <body class="admin-page">
@@ -659,6 +660,7 @@
 <span>Admin Panel &middot; Authorized personnel only</span>
 <a href="/">View public site &rarr;</a>
 </div></footer>
+{% include '_theme_foot.html' %}
 </body>
 
 </html>

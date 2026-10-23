@@ -22,6 +22,7 @@
         }
     </style>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-polish.css') }}?v=1">
+{% include '_theme_head.html' %}
 </head>
 
 <body class="admin-page page-manage-admins">
@@ -161,6 +162,7 @@
   }
 })();
 </script>
+{% include '_theme_foot.html' %}
 </body>
 
 </html>

@@ -227,7 +227,8 @@ html[data-theme="light"]{color-scheme:light}
 html[data-theme="light"] body{background:#f6f4f0;color:#17171b}
 html[data-theme="light"] .card,html[data-theme="light"] .testi-card,html[data-theme="light"] .testi-form,
 html[data-theme="light"] .lux-thumb,html[data-theme="light"] .price-card,html[data-theme="light"] .auction-panel,
-html[data-theme="light"] body.page-cars .card{background:#fff}
+html[data-theme="light"] body.page-cars .card,
+html[data-theme="light"] .cp-card,html[data-theme="light"] .cp-form-wrap,html[data-theme="light"] .sv-card,html[data-theme="light"] .sv-step,html[data-theme="light"] .ab-story,html[data-theme="light"] .tp-stats,html[data-theme="light"] .tp-empty{background:#fff}
 html[data-theme="light"] :where(h1,h2,h3,h4,h5,h6):not(:where([class*="hero"]:not(.cars-hero) *,.lux-stage *,.lux-info *)){color:#17171b}
 html[data-theme="light"] .brand,html[data-theme="light"] .topbar .brand,html[data-theme="light"] .site-nav .brand{color:#17171b}
 html[data-theme="light"] .brand em{color:#9a7a3a}

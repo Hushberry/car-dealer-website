@@ -167,6 +167,7 @@
         }
     </style>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-polish.css') }}?v=2">
+{% include '_theme_head.html' %}
 </head>
 
 <body class="admin-page">
@@ -221,6 +222,7 @@
             {% endif %}
             <a href="{{ url_for('admin_auctions') }}" class="btn-outline">Auctions</a>
                 <a href="{{ url_for('admin_testimonials') }}" class="btn-outline">Testimonials{% if pending_reviews %} <span style="background:#c9a96e;color:#0a0a0b;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:800;margin-left:6px">{{ pending_reviews }}</span>{% endif %}</a>
+                <a href="{{ url_for('admin_messages') }}" class="btn-outline">Messages{% if new_messages %} <span style="background:#c9a96e;color:#0a0a0b;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:800;margin-left:6px">{{ new_messages }}</span>{% endif %}</a>
                 <a href="{{ url_for('admin_logout') }}" class="btn-outline">Logout</a>
         </div>
 
@@ -301,6 +303,7 @@
 <span>Admin Panel &middot; Authorized personnel only</span>
 <a href="/">View public site &rarr;</a>
 </div></footer>
+{% include '_theme_foot.html' %}
 </body>
 
 </html>

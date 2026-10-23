@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        galleryButton.textContent = 'View More Photos';
+        galleryButton.textContent = 'View Full Gallery';
         galleryButton.dataset.expanded = 'false';
 
         const gallerySection = document.getElementById('gallery');

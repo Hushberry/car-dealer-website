@@ -1428,5 +1428,207 @@ def submit_testimonial():
     return jsonify(ok=True, live=False, msg="Thank you! Your review will appear once the dealer approves it.")
 # ====================== END PUBLIC TESTIMONIAL FORM ======================
 
+
+# ======================== CONTACT PAGE ========================
+def ensure_contact_schema():
+    conn = sqlite3.connect("database.db")
+    conn.execute("CREATE TABLE IF NOT EXISTS contact_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                 "name TEXT NOT NULL, phone TEXT, email TEXT, interest TEXT, message TEXT NOT NULL, "
+                 "handled INTEGER DEFAULT 0, created_at TEXT DEFAULT CURRENT_TIMESTAMP)")
+    conn.commit()
+    conn.close()
+
+
+ensure_contact_schema()
+_contact_hits = {}
+
+
+@app.context_processor
+def inject_new_messages():
+    n = 0
+    try:
+        if request.path.startswith("/admin"):
+            conn = sqlite3.connect("database.db")
+            n = conn.execute("SELECT COUNT(*) FROM contact_messages WHERE COALESCE(handled,0) = 0").fetchone()[0]
+            conn.close()
+    except Exception:
+        n = 0
+    return {"new_messages": n}
+
+
+@app.route("/contact")
+def contact_page():
+    import os
+    return render_template(
+        "contact.html",
+        whatsapp_number=DEALER_WHATSAPP_NUMBER,
+        phone_number=DEALER_PHONE_NUMBER,
+        dealer_address=DEALER_ADDRESS,
+        instagram=DEALER_INSTAGRAM,
+        facebook=DEALER_FACEBOOK,
+        twitter=DEALER_TWITTER,
+        contact_email=os.getenv("CONTACT_EMAIL", ""),
+        showroom_hours=os.getenv("SHOWROOM_HOURS", "Mon \u2013 Sat: 9:00 AM \u2013 6:00 PM|Sunday: By appointment"),
+    )
+
+
+@app.route("/contact/send", methods=["POST"])
+def contact_send():
+    ip = (request.headers.get("X-Forwarded-For", request.remote_addr or "") or "").split(",")[0].strip()
+    now = datetime.utcnow()
+    hits = [t for t in _contact_hits.get(ip, []) if (now - t).total_seconds() < 3600]
+    if len(hits) >= 5:
+        return jsonify(ok=False, msg="Too many messages. Please try again later or reach us on WhatsApp."), 429
+    if request.form.get("website"):
+        return jsonify(ok=True, msg="Thank you!")
+    name = request.form.get("name", "").strip()[:80]
+    phone = request.form.get("phone", "").strip()[:40]
+    email = request.form.get("email", "").strip()[:120]
+    interest = request.form.get("interest", "").strip()[:40]
+    message = request.form.get("message", "").strip()[:1500]
+    if len(name) < 2 or len(message) < 5 or (len(phone) < 6 and "@" not in email):
+        return jsonify(ok=False, msg="Please enter your name, a phone number or email, and your message."), 400
+    conn = sqlite3.connect("database.db")
+    conn.execute("INSERT INTO contact_messages (name, phone, email, interest, message) VALUES (?, ?, ?, ?, ?)",
+                 (name, phone, email, interest, message))
+    conn.commit()
+    conn.close()
+    hits.append(now)
+    _contact_hits[ip] = hits
+    body = "Name: %s\nPhone: %s\nEmail: %s\nInterested in: %s\n\n%s\n\nSee it in Admin > Messages." % (
+        name, phone or "-", email or "-", interest or "-", message)
+    threading.Thread(target=_send_email, args=("New website message - %s" % BRAND_NAME, body), daemon=True).start()
+    return jsonify(ok=True, msg="Thank you. Your message has been sent and our team will be in touch shortly.")
+
+
+@app.route("/admin/messages")
+def admin_messages():
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute("SELECT * FROM contact_messages ORDER BY COALESCE(handled,0) ASC, id DESC").fetchall()
+    conn.close()
+    return render_template("admin_messages.html", rows=rows)
+
+
+@app.route("/admin/messages/<int:mid>/done", methods=["POST"])
+def admin_message_done(mid):
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+    conn = sqlite3.connect("database.db")
+    conn.execute("UPDATE contact_messages SET handled = 1 - COALESCE(handled, 0) WHERE id = ?", (mid,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("admin_messages"))
+
+
+@app.route("/admin/messages/<int:mid>/delete", methods=["POST"])
+def admin_message_delete(mid):
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin_login"))
+    conn = sqlite3.connect("database.db")
+    conn.execute("DELETE FROM contact_messages WHERE id = ?", (mid,))
+    conn.commit()
+    conn.close()
+    flash("Message deleted.")
+    return redirect(url_for("admin_messages"))
+# ====================== END CONTACT PAGE ======================
+
+
+# ======================== SERVICES PAGE ========================
+@app.route("/services")
+def services_page():
+    return render_template(
+        "services.html",
+        whatsapp_number=DEALER_WHATSAPP_NUMBER,
+        phone_number=DEALER_PHONE_NUMBER,
+        dealer_address=DEALER_ADDRESS,
+        instagram=DEALER_INSTAGRAM,
+        facebook=DEALER_FACEBOOK,
+        twitter=DEALER_TWITTER,
+    )
+# ====================== END SERVICES PAGE ======================
+
+
+# ======================== ABOUT PAGE ========================
+@app.route("/about")
+def about_page():
+    return render_template(
+        "about.html",
+        whatsapp_number=DEALER_WHATSAPP_NUMBER,
+        phone_number=DEALER_PHONE_NUMBER,
+        dealer_address=DEALER_ADDRESS,
+        instagram=DEALER_INSTAGRAM,
+        facebook=DEALER_FACEBOOK,
+        twitter=DEALER_TWITTER,
+    )
+# ====================== END ABOUT PAGE ======================
+
+
+# ======================== TESTIMONIALS PAGE ========================
+@app.route("/testimonials")
+@app.route("/testimonials.html")
+def testimonials_page():
+    conn = sqlite3.connect("database.db")
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute("SELECT id, name, detail, rating, quote, photo, created_at FROM testimonials "
+                        "WHERE visible = 1 AND COALESCE(pending, 0) = 0 ORDER BY id DESC").fetchall()
+    conn.close()
+    reviews = []
+    for r in rows:
+        d = dict(r)
+        try:
+            dt = datetime.strptime((d.get("created_at") or "")[:10], "%Y-%m-%d")
+            d["date"] = "%d %s" % (dt.day, dt.strftime("%b %Y"))
+        except Exception:
+            d["date"] = ""
+        try:
+            d["rating"] = max(1, min(5, int(d.get("rating") or 5)))
+        except Exception:
+            d["rating"] = 5
+        reviews.append(d)
+    count = len(reviews)
+    avg = round(sum(x["rating"] for x in reviews) / float(count), 1) if count else 0
+    return render_template(
+        "testimonials.html",
+        reviews=reviews,
+        review_count=count,
+        review_avg=avg,
+        whatsapp_number=DEALER_WHATSAPP_NUMBER,
+        phone_number=DEALER_PHONE_NUMBER,
+        dealer_address=DEALER_ADDRESS,
+        instagram=DEALER_INSTAGRAM,
+        facebook=DEALER_FACEBOOK,
+        twitter=DEALER_TWITTER,
+    )
+# ====================== END TESTIMONIALS PAGE ======================
+
+
+# ======================== SITE DETAILS (footer) ========================
+@app.context_processor
+def inject_site():
+    import os
+    from datetime import datetime as _dt
+
+    def _u(env, fallback):
+        v = os.getenv(env, "").strip()
+        return v or (fallback or "")
+
+    return {
+        "site_whatsapp": DEALER_WHATSAPP_NUMBER or "",
+        "site_phone": DEALER_PHONE_NUMBER or "",
+        "site_address": DEALER_ADDRESS or "",
+        "site_instagram": _u("INSTAGRAM_URL", DEALER_INSTAGRAM),
+        "site_facebook": _u("FACEBOOK_URL", DEALER_FACEBOOK),
+        "site_twitter": _u("TWITTER_URL", DEALER_TWITTER),
+        "site_tiktok": os.getenv("TIKTOK_URL", "").strip(),
+        "site_youtube": os.getenv("YOUTUBE_URL", "").strip(),
+        "site_email": os.getenv("CONTACT_EMAIL", "").strip(),
+        "site_hours": os.getenv("SHOWROOM_HOURS", "Mon \u2013 Sat: 9:00 AM \u2013 6:00 PM|Sunday: By appointment"),
+        "current_year": _dt.utcnow().year,
+    }
+# ====================== END SITE DETAILS ======================
+
 if __name__ == "__main__":
     app.run(debug=False)
