@@ -1,0 +1,39 @@
+
+:root{--al-card:#131316;--al-border:#26262b;--al-text:#f4f1ea;--al-muted:#9a9aa2;--al-gold:#c9a96e;--al-gold-ink:#c9a96e}
+html[data-theme="light"]{--al-card:#ffffff;--al-border:#e8e1d2;--al-text:#16130c;--al-muted:#5f5f67;--al-gold-ink:#8a6a2a}
+
+.admin-wrap,.admin-page{max-width:1240px}
+.admin-header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:30px !important;padding-bottom:22px;border-bottom:1px solid var(--al-border)}
+.admin-title-group h1,.admin-title-group h2{font-size:clamp(26px,3vw,34px) !important;font-weight:500 !important;letter-spacing:-.2px;color:var(--al-text) !important}
+.admin-nav{display:flex;gap:10px;flex-wrap:wrap}
+
+/* stat tiles */
+.stats-row{display:grid !important;grid-template-columns:repeat(auto-fit,minmax(190px,1fr)) !important;gap:18px !important;margin:0 0 38px !important}
+.stat-card{position:relative;background:var(--al-card) !important;border:1px solid var(--al-border) !important;border-radius:16px !important;padding:26px 24px !important;overflow:hidden;box-shadow:0 8px 26px rgba(0,0,0,.08)}
+.stat-card::before{content:"";position:absolute;left:0;top:0;width:100%;height:3px;background:linear-gradient(90deg,var(--al-gold),transparent)}
+.stat-value{font-size:38px !important;font-weight:600 !important;line-height:1.1;color:var(--al-gold-ink) !important}
+.stat-label{margin-top:8px;font-size:11.5px !important;letter-spacing:2.4px !important;text-transform:uppercase;color:var(--al-muted) !important;font-weight:700 !important}
+
+/* car cards */
+.admin-grid{display:grid !important;grid-template-columns:repeat(auto-fill,minmax(310px,1fr)) !important;gap:26px !important;align-items:stretch}
+.admin-card{display:flex !important;flex-direction:column;background:var(--al-card) !important;border:1px solid var(--al-border) !important;border-radius:18px !important;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.08);transition:transform .3s,box-shadow .3s,border-color .3s}
+.admin-card:hover{transform:translateY(-4px);border-color:var(--al-gold) !important;box-shadow:0 18px 40px rgba(0,0,0,.14)}
+.admin-card-photo{display:block;width:100% !important;aspect-ratio:16/10;height:auto !important;object-fit:cover;overflow:hidden;position:relative}
+.admin-card-photo img{width:100% !important;height:100% !important;object-fit:cover;display:block}
+.admin-card-body{display:flex !important;flex-direction:column;flex:1;padding:22px 22px 24px !important}
+.admin-card-body h3,.admin-card-body h2{font-size:19px !important;font-weight:600 !important;margin:0 0 8px !important;color:var(--al-text) !important}
+.admin-card-meta{font-size:13px !important;color:var(--al-muted) !important;font-weight:500 !important;margin-bottom:12px}
+.admin-price{font-size:21px !important;font-weight:600 !important;color:var(--al-gold-ink) !important;margin-bottom:18px}
+.admin-actions{margin-top:auto !important;padding-top:18px;border-top:1px solid var(--al-border);display:flex;gap:8px;flex-wrap:wrap}
+.admin-actions .btn-outline,.admin-actions button,.admin-actions a{font-size:11.5px !important;letter-spacing:1.4px;text-transform:uppercase;font-weight:700 !important;padding:9px 14px !important;border-radius:999px !important}
+.btn-gold{border-radius:999px !important;letter-spacing:1.6px;text-transform:uppercase;font-weight:700 !important}
+.sold-tag{border-radius:999px !important;letter-spacing:1.5px;font-size:11px !important}
+
+/* login */
+body.login-page{background-color:#08080a !important;background-image:linear-gradient(rgba(6,6,8,.78),rgba(6,6,8,.93)),url('/static/img/hero.jpg') !important;background-size:cover !important;background-position:center !important}
+.login-card{max-width:470px !important;padding:52px 42px 42px !important;border:1px solid rgba(201,169,110,.28) !important;border-top:1px solid rgba(201,169,110,.28) !important;border-radius:20px !important;backdrop-filter:blur(14px);box-shadow:0 40px 100px rgba(0,0,0,.7) !important;position:relative}
+.login-card::before{content:"";position:absolute;left:42px;right:42px;top:0;height:2px;background:linear-gradient(90deg,transparent,#c9a96e,transparent)}
+.login-brand{font-size:30px !important;margin-bottom:30px !important}
+.login-title{font-size:15px !important;letter-spacing:.32em !important;color:#c9a96e !important}
+.login-sub{font-size:14px !important}
+@media (max-width:600px){.login-card{padding:40px 24px 32px !important}.admin-grid{grid-template-columns:1fr !important}}

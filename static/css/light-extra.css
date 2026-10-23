@@ -52,3 +52,9 @@ html:not([data-theme="light"]) #galleryViewMoreBtn{color:#c9a96e !important}
 html:not([data-theme="light"]) #galleryViewMoreBtn:hover{color:#0a0a0b !important}
 @media (max-width:900px){div:has(> .gallery-item){grid-template-columns:repeat(2,1fr) !important;gap:16px !important}}
 @media (max-width:520px){div:has(> .gallery-item){grid-template-columns:1fr !important}}
+
+/* Gallery heading */
+.gallery-section{text-align:center}
+.gallery-section .cc-eyebrow{display:block;text-align:center;margin:0 0 14px !important}
+.gallery-section .cc-title{text-align:center;margin:0 0 16px !important}
+.gallery-section .st-sub{max-width:560px;margin:0 auto 46px !important;color:#8a8a93;font-size:15.5px;line-height:1.75;font-weight:400 !important;text-align:center}
