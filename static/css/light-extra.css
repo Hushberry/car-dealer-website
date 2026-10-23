@@ -152,3 +152,77 @@ iframe[src*="google.com/maps"],iframe[src*="maps"],.cp-map iframe,.cp-map{height
   .services-teaser,.about-preview,.testi,.gallery-section{padding-top:60px !important;padding-bottom:60px !important}
   .site-cta{margin-top:28px !important;padding-top:68px !important;padding-bottom:68px !important}
 }
+
+/* ===== Car detail: luxury ===== */
+:root{--cd-card:#131316;--cd-border:#26262b;--cd-text:#f4f1ea;--cd-muted:#9a9aa2;--cd-gold:#c9a96e;--cd-gold-ink:#c9a96e}
+html[data-theme="light"]{--cd-card:#ffffff;--cd-border:#e8e1d2;--cd-text:#16130c;--cd-muted:#5f5f67;--cd-gold-ink:#8a6a2a}
+
+.detail-layout{display:grid !important;grid-template-columns:minmax(0,1fr) 390px !important;gap:52px !important;max-width:1240px !important;margin:0 auto !important;padding:34px 24px 80px !important;align-items:start}
+.detail-sidebar{position:sticky;top:104px;align-self:start}
+.back-link{font-size:12px !important;letter-spacing:2px !important;text-transform:uppercase;font-weight:700 !important}
+
+/* gallery */
+.photo-stage{border-radius:22px !important;overflow:hidden;aspect-ratio:16/10;height:auto !important;box-shadow:0 24px 60px rgba(0,0,0,.28);border:1px solid var(--cd-border)}
+.thumb-strip{display:flex !important;gap:12px !important;margin-top:16px !important;overflow-x:auto;padding-bottom:6px}
+.thumb-strip img{width:104px !important;height:72px !important;object-fit:cover;border-radius:12px !important;border:2px solid transparent !important;opacity:.7;transition:.25s;flex:none;cursor:pointer}
+.thumb-strip img:hover{opacity:1}
+.thumb-strip .active-thumb,.thumb-strip .active-thumb img,.thumb-strip img.active-thumb{border-color:var(--cd-gold) !important;opacity:1}
+
+/* title block */
+.detail-top-badges{display:flex;gap:8px;flex-wrap:wrap;margin:30px 0 14px !important}
+.detail-badge{padding:6px 14px !important;border-radius:999px !important;font-size:10.5px !important;letter-spacing:2px !important;text-transform:uppercase;font-weight:700 !important}
+.detail-title-big{font-size:clamp(28px,3.2vw,42px) !important;line-height:1.12 !important;font-weight:500 !important;letter-spacing:-.4px;margin:0 0 12px !important;color:var(--cd-text) !important}
+.detail-location-row{color:var(--cd-muted) !important;font-size:14px !important;font-weight:500 !important}
+
+/* spec tiles */
+.spec-grid{display:grid !important;grid-template-columns:repeat(auto-fit,minmax(150px,1fr)) !important;gap:14px !important;margin:30px 0 !important}
+.spec-item{background:var(--cd-card) !important;border:1px solid var(--cd-border) !important;border-radius:14px !important;padding:18px 18px !important;position:relative;overflow:hidden}
+.spec-item::before{content:"";position:absolute;left:0;top:0;width:3px;height:100%;background:var(--cd-gold)}
+.spec-label{font-size:10.5px !important;letter-spacing:2px !important;text-transform:uppercase;color:var(--cd-muted) !important;font-weight:700 !important}
+.spec-value{margin-top:6px;font-size:17px !important;font-weight:600 !important;color:var(--cd-text) !important}
+
+/* section headings */
+.detail-main h2{position:relative;font-size:22px !important;font-weight:500 !important;color:var(--cd-text) !important;margin:44px 0 20px !important;padding-bottom:14px}
+.detail-main h2::after{content:"";position:absolute;left:0;bottom:0;width:44px;height:2px;background:var(--cd-gold)}
+.detail-desc{font-size:15.5px !important;line-height:1.9 !important;font-weight:500 !important;color:var(--cd-text) !important;opacity:.92}
+.features-list{columns:2;column-gap:36px}
+.features-list li{margin-bottom:12px;break-inside:avoid;font-weight:500}
+.map-frame-full,.map-frame-full iframe{border-radius:16px !important;overflow:hidden;max-height:280px}
+
+/* price + actions */
+.price-card{background:var(--cd-card) !important;border:1px solid var(--cd-border) !important;border-radius:20px !important;padding:30px 28px !important;position:relative;overflow:hidden;box-shadow:0 18px 44px rgba(0,0,0,.14)}
+.price-card::before{content:"";position:absolute;left:0;top:0;width:100%;height:3px;background:linear-gradient(90deg,var(--cd-gold),transparent)}
+.price-label{font-size:11px !important;letter-spacing:2.4px !important;text-transform:uppercase;color:var(--cd-muted) !important;font-weight:700 !important}
+.price-value{font-size:clamp(30px,3vw,38px) !important;font-weight:600 !important;color:var(--cd-gold-ink) !important;margin:6px 0 4px !important;letter-spacing:-.5px}
+.price-note{font-size:13px !important;color:var(--cd-muted) !important;font-weight:500 !important}
+.price-card .btn-gold,.price-card .btn-whatsapp,.price-card .btn-call,.detail-sidebar .btn-gold,.detail-sidebar .btn-whatsapp,.detail-sidebar .btn-call{display:block !important;width:100%;box-sizing:border-box;text-align:center;padding:15px 20px !important;border-radius:999px !important;font-size:12.5px !important;font-weight:700 !important;letter-spacing:1.8px !important;text-transform:uppercase;margin-top:12px !important;text-decoration:none}
+.btn-call{background:transparent !important;border:1px solid var(--cd-gold) !important;color:var(--cd-gold-ink) !important}
+.btn-call:hover{background:var(--cd-gold) !important;color:#0a0a0b !important}
+.trust-card{background:var(--cd-card) !important;border:1px solid var(--cd-border) !important;border-radius:16px !important;padding:20px 22px !important;margin-top:18px !important}
+.trust-row-item{font-weight:500 !important;color:var(--cd-text) !important}
+
+/* forms */
+.form-block,.collapsible-form{border:1px solid var(--cd-border) !important;border-radius:16px !important;background:var(--cd-card) !important}
+.form-toggle{font-size:12px !important;letter-spacing:1.6px !important;text-transform:uppercase;font-weight:700 !important}
+
+/* sub nav */
+.sticky-subnav{backdrop-filter:blur(10px)}
+
+@media (max-width:1000px){
+  .detail-layout{grid-template-columns:1fr !important;gap:30px !important;padding:22px 18px 60px !important}
+  .detail-sidebar{position:static}
+  .features-list{columns:1}
+}
+@media (max-width:600px){
+  .photo-stage{aspect-ratio:4/3;border-radius:16px !important}
+  .thumb-strip img{width:84px !important;height:58px !important}
+  .spec-grid{grid-template-columns:repeat(2,1fr) !important;gap:10px !important}
+  .spec-item{padding:14px !important}
+}
+
+/* Vehicle details tiles: label above value */
+.spec-grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr)) !important;gap:16px !important}
+.spec-item{display:flex !important;flex-direction:column !important;align-items:flex-start !important;justify-content:center;gap:8px !important;padding:20px 22px !important;min-height:0 !important;text-align:left !important}
+.spec-label{white-space:nowrap !important;word-break:normal !important;margin:0 !important;text-align:left !important;font-size:10.5px !important}
+.spec-value{white-space:normal !important;word-break:normal !important;overflow-wrap:normal;margin:0 !important;text-align:left !important;font-size:17px !important;line-height:1.3}
+@media (max-width:600px){.spec-grid{grid-template-columns:repeat(2,1fr) !important}.spec-item{padding:16px 16px !important}}
