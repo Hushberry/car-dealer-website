@@ -115,3 +115,24 @@ html:not([data-theme="light"]) .testi-grid .testi-more{color:#c9a96e}
 .ab-story h2,.ab-story .cc-title{font-size:clamp(20px,2vw,25px) !important;margin:0 0 14px !important}
 .ab-story p{font-size:14.5px !important;line-height:1.7 !important;margin:0 0 12px !important}
 @media (max-width:760px){.ab-story img{max-height:240px}.ab-story [class*="text"],.ab-story [class*="body"],.ab-story [class*="copy"]{padding:24px 22px !important}}
+
+/* Gallery toggle */
+#galleryGrid .gallery-item.hidden-extra{display:none !important}
+#galleryGrid.gal-open .gallery-item.hidden-extra{display:block !important}
+
+/* Contact: compact form + booking panel */
+.cp-main{max-width:1020px !important;margin-left:auto !important;margin-right:auto !important;gap:26px !important}
+.cp-main > *{min-height:0 !important}
+.cp-main [class*="form"],.cp-main [class*="panel"],.cp-main [class*="card"],.cp-main form{padding-top:0}
+.cp-main [class*="form"],.cp-main [class*="card"]{padding:30px 32px !important}
+.cp-main h2,.cp-main h3{font-size:clamp(19px,1.9vw,24px) !important;line-height:1.25 !important;margin:0 0 10px !important}
+.cp-main p{font-size:14.5px !important;line-height:1.7 !important;margin:0 0 14px !important}
+.cp-main .cc-eyebrow,.cp-main [class*="eyebrow"]{font-size:10.5px !important;margin-bottom:8px !important}
+.cp-main input,.cp-main select,.cp-main textarea{padding:11px 14px !important;font-size:14.5px !important;border-radius:10px !important}
+.cp-main textarea{min-height:96px !important;height:96px}
+.cp-main label{font-size:11px !important;margin-bottom:5px !important}
+.cp-main form > *{margin-bottom:12px}
+.cp-main button,.cp-main .cc-btn{padding:13px 28px !important;font-size:12px !important}
+.cp-main img{max-height:300px;object-fit:cover;width:100%}
+.cp-main [class*="photo"],.cp-main [class*="img"],.cp-main [class*="media"]{max-height:300px;overflow:hidden}
+@media (max-width:760px){.cp-main [class*="form"],.cp-main [class*="card"]{padding:22px 20px !important}.cp-main img{max-height:210px}}

@@ -528,6 +528,28 @@
   window.addEventListener('load', function(){ setTimeout(run, 900); setTimeout(run, 2500); });
 })();
 </script>
+
+<script id="gallery-toggle">
+/* reliable View Full Gallery / View Less toggle */
+window.addEventListener('load', function(){
+  var old = document.getElementById('galleryViewMoreBtn');
+  var grid = document.getElementById('galleryGrid');
+  if (!old || !grid) return;
+  var btn = old.cloneNode(true);          /* drops the old click handlers */
+  old.parentNode.replaceChild(btn, old);
+  btn.textContent = 'View Full Gallery';
+  btn.dataset.expanded = 'false';
+  btn.addEventListener('click', function(){
+    var open = grid.classList.toggle('gal-open');
+    btn.dataset.expanded = open ? 'true' : 'false';
+    btn.textContent = open ? 'View Less' : 'View Full Gallery';
+    if (!open) {
+      var s = document.getElementById('gallery');
+      if (s) s.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+});
+</script>
 </body>
 
 </html>
