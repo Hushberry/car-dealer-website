@@ -1,0 +1,6 @@
+html[data-theme="light"] .st-card{background:#fff;border:1px solid #e8e1d2;box-shadow:0 6px 22px rgba(20,16,8,.05)}
+html[data-theme="light"] .st-card:hover{border-color:#c9a96e;box-shadow:0 14px 32px rgba(20,16,8,.1)}
+html[data-theme="light"] .st-card h3{color:#16130c}
+html[data-theme="light"] .st-card p{color:#5a5a62}
+html[data-theme="light"] .st-ico{background:#f6edd9;color:#9a7733}
+html[data-theme="light"] .services-teaser .st-sub{color:#5a5a62}

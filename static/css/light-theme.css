@@ -205,10 +205,6 @@ html[data-theme="light"] .st-card{border:1px solid #ceced3;background:#e9e9ec}
 html[data-theme="light"] .st-ico{color:#866832}
 html[data-theme="light"] .st-card p{color:#4c4c54}
 html[data-theme="light"] #backToTop,html[data-theme="light"] .backToTop,html[data-theme="light"] #backToTop *,html[data-theme="light"] .backToTop *{color:#9c9ca5 !important;stroke:#9c9ca5 !important}
-html[data-theme="light"][data-theme="light"] .st-card{background:#030303 !important;box-shadow:0 8px 26px rgba(20,16,8,0.024)}
-html[data-theme="light"][data-theme="light"] .st-card:hover{box-shadow:0 14px 34px rgba(20,16,8,0.04)}
-html[data-theme="light"][data-theme="light"] .st-card p,html[data-theme="light"][data-theme="light"] .st-sub{color:#74747f !important}
-html[data-theme="light"][data-theme="light"] .st-ico{background:#281e0b !important}
 html[data-theme="light"] .sold-banner{color:#972c20}
 html[data-theme="light"] .photo-stage{background:#ededef}
 html[data-theme="light"] .photo-nav{border:1px solid rgba(3,3,3,0.25);background:rgba(242,242,243,0.55);color:#000000}
