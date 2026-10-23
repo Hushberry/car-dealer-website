@@ -1647,5 +1647,57 @@ def _gallery_excl(featured):
     except Exception:
         return photos
 
+
+# ===== ADMIN LOGIN PROTECTION =====
+import time as _lp_time
+
+def _lp_db():
+    return sqlite3.connect("database.db")
+
+try:
+    _c = _lp_db()
+    _c.execute("CREATE TABLE IF NOT EXISTS login_attempts (id INTEGER PRIMARY KEY AUTOINCREMENT, ip TEXT, ts INTEGER)")
+    _c.commit(); _c.close()
+except Exception:
+    pass
+
+def _lp_ip():
+    xf = request.headers.get("X-Forwarded-For", "")
+    return (xf.split(",")[0].strip() if xf else request.remote_addr) or "?"
+
+def _lp_is_login():
+    p = request.path.lower()
+    return request.method == "POST" and "admin" in p and "login" in p
+
+@app.before_request
+def _lp_check():
+    if not _lp_is_login():
+        return None
+    since = int(_lp_time.time()) - 15 * 60
+    con = _lp_db()
+    n = con.execute("SELECT COUNT(*) FROM login_attempts WHERE ip=? AND ts>?", (_lp_ip(), since)).fetchone()[0]
+    con.close()
+    if n >= 5:
+        return ("Too many failed login attempts. Please wait 15 minutes and try again.", 429)
+    return None
+
+@app.after_request
+def _lp_record(resp):
+    try:
+        if _lp_is_login():
+            con = _lp_db()
+            loc = (resp.headers.get("Location") or "").lower()
+            redirected = resp.status_code in (301, 302, 303, 307, 308)
+            failed = (resp.status_code == 200) or (redirected and "login" in loc)
+            if failed:
+                con.execute("INSERT INTO login_attempts (ip, ts) VALUES (?,?)", (_lp_ip(), int(_lp_time.time())))
+            elif redirected:
+                con.execute("DELETE FROM login_attempts WHERE ip=?", (_lp_ip(),))
+            con.execute("DELETE FROM login_attempts WHERE ts<?", (int(_lp_time.time()) - 86400,))
+            con.commit(); con.close()
+    except Exception:
+        pass
+    return resp
+
 if __name__ == "__main__":
     app.run(debug=False)
