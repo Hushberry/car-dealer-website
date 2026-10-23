@@ -62,3 +62,27 @@
     </div>
   </div>
 </footer>
+
+<script id="hide-placeholders">
+/* hide social icons that still point to placeholder links */
+document.querySelectorAll('a[href*="yourhandle"]').forEach(function(a){a.remove();});
+</script>
+
+<script id="scrolltop-finder">
+/* find the fixed "back to top" arrow button and tag it so CSS can style it */
+(function(){
+  function tag(){
+    var marks = ['\u2191','\u2303','\u21D1','\u25B2','^'];
+    document.querySelectorAll('button,a,div,span').forEach(function(el){
+      var t = (el.textContent || '').trim();
+      var hasArrowSvg = false;
+      if (marks.indexOf(t) === -1) return;
+      var n = el;
+      for (var i = 0; i < 4 && n && n !== document.body; i++, n = n.parentElement) {
+        if (getComputedStyle(n).position === 'fixed') { n.classList.add('scrolltop-fix'); return; }
+      }
+    });
+  }
+  window.addEventListener('load', function(){ tag(); setTimeout(tag, 800); });
+})();
+</script>
