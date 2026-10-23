@@ -175,7 +175,7 @@ def home():
         instagram=DEALER_INSTAGRAM,
         facebook=DEALER_FACEBOOK,
         twitter=DEALER_TWITTER,
-        gallery_photos=get_gallery_photos()
+        gallery_photos=_gallery_excl(locals().get("cars"))
     )
 
 
@@ -215,7 +215,7 @@ def cars_page():
         instagram=DEALER_INSTAGRAM,
         facebook=DEALER_FACEBOOK,
         twitter=DEALER_TWITTER,
-        gallery_photos=get_gallery_photos()
+        gallery_photos=_gallery_excl(locals().get("cars"))
     )
 
 
@@ -1629,6 +1629,23 @@ def inject_site():
         "current_year": _dt.utcnow().year,
     }
 # ====================== END SITE DETAILS ======================
+
+
+def _gallery_excl(featured):
+    """gallery photos: cars NOT already featured in Latest Arrivals come first"""
+    photos = get_gallery_photos()
+    try:
+        ids = set()
+        for c in (featured or []):
+            try:
+                ids.add(c["id"])
+            except Exception:
+                ids.add(c[0])
+        rest = [x for x in photos if x["car_id"] not in ids]
+        shown = [x for x in photos if x["car_id"] in ids]
+        return rest + shown
+    except Exception:
+        return photos
 
 if __name__ == "__main__":
     app.run(debug=False)

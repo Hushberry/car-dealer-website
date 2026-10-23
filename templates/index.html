@@ -185,7 +185,7 @@
 
         <div class="gallery-grid" id="galleryGrid">
             {% for p in gallery_photos %}
-            <div class="gallery-item {% if loop.index > 6 %}hidden-extra{% endif %}"
+            <div class="gallery-item {% if loop.index > 3 %}hidden-extra{% endif %}"
                 data-photos='{{ p["photos"]|tojson }}'
                 data-base="{{ url_for('static', filename='uploads/') }}" data-i="0">
                 <a href="{{ url_for('car_detail', car_id=p['car_id']) }}" class="g-link">
@@ -205,7 +205,7 @@
 
         </div>
 
-        {% if gallery_photos|length > 6 %}
+        {% if gallery_photos|length > 3 %}
         <button type="button" class="btn-outline gallery-view-more" id="galleryViewMoreBtn" data-expanded="false">
             View Full Gallery
         </button>
@@ -508,6 +508,26 @@
 })();
 </script>
 
+
+<script id="testi-excerpt">
+/* long reviews: clamp on the homepage and link to the full review */
+(function(){
+  function run(){
+    document.querySelectorAll('.testi-grid p, .testi-grid blockquote').forEach(function(q){
+      if (q.dataset.ex) return;
+      if (q.scrollHeight > q.clientHeight + 2) {
+        q.dataset.ex = "1";
+        var a = document.createElement('a');
+        a.href = '/testimonials';
+        a.className = 'testi-more';
+        a.textContent = 'Read full review \u2192';
+        q.insertAdjacentElement('afterend', a);
+      }
+    });
+  }
+  window.addEventListener('load', function(){ setTimeout(run, 900); setTimeout(run, 2500); });
+})();
+</script>
 </body>
 
 </html>
