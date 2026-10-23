@@ -14,6 +14,16 @@
 <meta property="og:url" content="{{ request.url_root }}">
 <meta property="og:image" content="{{ url_for('static', filename='img/hero.jpg', _external=True, _scheme='https') }}">
 <meta name="twitter:card" content="summary_large_image">
+<!-- seo -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ brand_name }}">
+<meta property="og:title" content="{{ brand_name }}">
+<meta property="og:description" content="Learn how we buy, sell and swap cars with honest listings, personal service and clear pricing.">
+<meta property="og:image" content="{{ url_for('static', filename='img/og.jpg', _external=True, _scheme='https') }}">
+<meta property="og:url" content="{{ request.url.replace('http://', 'https://') }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0a0a0b">
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
 </head>
 
 <body class="page-home page-about">

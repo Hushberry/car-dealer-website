@@ -1699,5 +1699,34 @@ def _lp_record(resp):
         pass
     return resp
 
+
+# ===== SEO ROUTES =====
+from flask import Response as _SeoResponse
+
+@app.route("/robots.txt")
+def robots_txt():
+    base = request.url_root.replace("http://", "https://").rstrip("/")
+    return _SeoResponse("User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: " + base + "/sitemap.xml\n", mimetype="text/plain")
+
+@app.route("/sitemap.xml")
+def sitemap_xml():
+    base = request.url_root.replace("http://", "https://").rstrip("/")
+    paths = ["/", "/cars", "/services", "/about", "/contact", "/testimonials", "/sell-car"]
+    try:
+        paths.append(url_for("swap_car"))
+    except Exception:
+        pass
+    try:
+        con = sqlite3.connect("database.db")
+        for (cid,) in con.execute("SELECT id FROM cars"):
+            paths.append(url_for("car_detail", car_id=cid))
+        con.close()
+    except Exception:
+        pass
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    xml += "".join("  <url><loc>%s%s</loc></url>\n" % (base, p) for p in paths)
+    xml += "</urlset>\n"
+    return _SeoResponse(xml, mimetype="application/xml")
+
 if __name__ == "__main__":
     app.run(debug=False)
