@@ -136,3 +136,19 @@ html:not([data-theme="light"]) .testi-grid .testi-more{color:#c9a96e}
 .cp-main img{max-height:300px;object-fit:cover;width:100%}
 .cp-main [class*="photo"],.cp-main [class*="img"],.cp-main [class*="media"]{max-height:300px;overflow:hidden}
 @media (max-width:760px){.cp-main [class*="form"],.cp-main [class*="card"]{padding:22px 20px !important}.cp-main img{max-height:210px}}
+
+/* Contact map smaller */
+iframe[src*="google.com/maps"],iframe[src*="maps"],.cp-map iframe,.cp-map{height:280px !important;max-height:280px !important;width:100%;border-radius:16px}
+.cp-map{overflow:hidden;max-width:1020px;margin-left:auto !important;margin-right:auto !important}
+@media (max-width:700px){iframe[src*="maps"],.cp-map iframe,.cp-map{height:220px !important;max-height:220px !important}}
+
+/* Space between homepage sections and the closing CTA */
+.services-teaser,.about-preview,.testi,.gallery-section{padding-top:84px !important;padding-bottom:84px !important}
+.gallery-section{padding-bottom:96px !important}
+.site-cta{margin-top:48px !important;padding-top:96px !important;padding-bottom:96px !important}
+.site-cta h2,.site-cta .cc-title{margin-bottom:18px !important}
+.site-cta p{margin-bottom:34px !important}
+@media (max-width:700px){
+  .services-teaser,.about-preview,.testi,.gallery-section{padding-top:60px !important;padding-bottom:60px !important}
+  .site-cta{margin-top:28px !important;padding-top:68px !important;padding-bottom:68px !important}
+}
