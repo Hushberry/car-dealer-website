@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Auctions &mdash; {{ brand_name }}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-polish.css') }}?v=1">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-polish.css') }}?v=2">
 <style>
 .au-sub{color:#9a9aa3;margin:0 0 22px;max-width:640px}
 .au-card{background:#0e0e10;border:1px solid #26262a;border-top:2px solid rgba(201,169,110,.6);border-radius:12px;padding:22px 24px;margin:0 0 18px}
@@ -38,7 +38,7 @@
   {% set c = it.car %}{% set st = it.state %}
   <section class="au-card">
     <div class="au-head">
-      <h3>{{ c["year"] }} {{ c["make"] }} {{ c["model"] }} <span style="color:#8a8a93;font-weight:400;font-size:14px">&middot; &#8358;{{ "{:,}".format(c["price"]) }}</span></h3>
+      <h3>{{ c["year"] }} {{ c["make"] }} {{ c["model"] }} <span class="au-price">&#8358;{{ "{:,}".format(c["price"]) }}</span></h3>
       {% if not st.enabled %}<span class="au-pill">Not an auction</span>
       {% elif st.ended %}<span class="au-pill ended">Ended</span>
       {% else %}<span class="au-pill live">Live</span>{% endif %}

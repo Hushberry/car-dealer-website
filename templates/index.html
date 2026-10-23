@@ -55,7 +55,7 @@
 
             <div class="pill-row">
 
-                <a href="{{ url_for('home', listing_type='sale') }}#available-cars" class="pill">
+                <a href="{{ url_for('cars_page', listing_type='sale') }}" class="pill">
                     🚗 Buy a Car
                 </a>
 
@@ -70,7 +70,7 @@
                     🔄 Trade-In
                 </a>
 
-                <a href="{{ url_for('home', listing_type='rent') }}#available-cars" class="pill">
+                <a href="{{ url_for('cars_page', listing_type='rent') }}" class="pill">
                     🔑 Rent a Car
                 </a>
 
@@ -91,160 +91,67 @@
     </div>
 
 
-    <form method="GET" class="filters">
-        <input type="text" name="q" placeholder="Search make, model, year..." value="{{ request.args.get('q', '') }}"
-            style="flex:1; min-width:200px;">
-        <select name="make">
-            <option value="">All Makes</option>
-            {% for m in makes %}
-            <option value="{{ m }}" {% if request.args.get('make')==m %}selected{% endif %}>{{ m }}</option>
-            {% endfor %}
-        </select>
-        <select name="sort">
-            <option value="newest" {% if request.args.get('sort', 'newest' )=='newest' %}selected{% endif %}>Newest
-                First</option>
-            <option value="price_low" {% if request.args.get('sort')=='price_low' %}selected{% endif %}>Price: Low to
-                High</option>
-            <option value="price_high" {% if request.args.get('sort')=='price_high' %}selected{% endif %}>Price: High to
-                Low</option>
-        </select>
+    <section id="available-cars" class="lux">
+  <div class="lux-inner">
+    <div class="lux-head">
+      <div>
+        <p class="lux-eyebrow">The Collection</p>
+        <h2 class="lux-title">Latest Arrivals</h2>
+      </div>
+      <form action="{{ url_for('cars_page') }}" method="get" class="home-search">
+        <input type="text" name="q" placeholder="Search make or model" autocomplete="off">
         <button type="submit">Search</button>
-        <a href="{{ url_for('home') }}" class="btn-outline">Clear</a>
-    </form>
-
-    <div id="available-cars" class="section-label">
-        {{ cars|length }} car{{ 's' if cars|length != 1 else '' }} available
+      </form>
     </div>
 
-    <div class="grid">
-        {% for item in cars %}
-        {% set car = item.car %}
-        {% set photos = item.photos %}
-
-        <div class="card">
-
-            <!-- =====================================================
-             VEHICLE PHOTO
-             ===================================================== -->
-            <div class="card-photo">
-
-                {% if photos %}
-
-                {% set ns = namespace(urls=[]) %}
-
-                {% for p in photos %}
-                {% set ns.urls = ns.urls + [url_for('static', filename='uploads/' + p)] %}
-                {% endfor %}
-
-                <img class="rotating-photo" src="{{ ns.urls[0] }}" data-photos='{{ ns.urls | tojson }}' data-index="0"
-                    alt="{{ car['year'] }} {{ car['make'] }} {{ car['model'] }}">
-
-                {% if ns.urls|length > 1 %}
-
-                <!-- Previous Photo -->
-                <button type="button" class="photo-arrow prev" onclick="event.preventDefault(); changePhoto(this, -1)"
-                    aria-label="Previous photo">
-                    ‹
-                </button>
-
-                <!-- Next Photo -->
-                <button type="button" class="photo-arrow next" onclick="event.preventDefault(); changePhoto(this, 1)"
-                    aria-label="Next photo">
-                    ›
-                </button>
-
-                <!-- Photo Dots -->
-                <div class="photo-dots">
-
-                    {% for p in ns.urls %}
-
-                    <span class="photo-dot {% if loop.index0 == 0 %}active{% endif %}"></span>
-
-                    {% endfor %}
-
-                </div>
-
-                {% endif %}
-
-                {% else %}
-
-                <!-- No Photo -->
-                <div class="no-photo">
-
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-                        <path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13" />
-                        <rect x="2" y="13" width="20" height="6" rx="1.5" />
-                        <circle cx="7" cy="19.5" r="1.5" />
-                        <circle cx="17" cy="19.5" r="1.5" />
-                    </svg>
-
-                </div>
-
-                {% endif %}
-
-
-                <!-- =================================================
-                 LISTING BADGE
-                 ================================================= -->
-
-                <div class="card-tags">
-                    <span class="badge {% if car['sold'] == 1 %}badge-sold{% endif %}">{% if car['sold'] == 1 %}Sold{% else %}Available{% endif %}</span>
-                    {% if car["condition"] %}<span class="cond-tag {% if car["condition"] == "Foreign Used" %}cond-foreign{% elif car["condition"] == "Nigerian Used" %}cond-local{% else %}cond-new{% endif %}">{{ car["condition"] }}</span>{% endif %}
-                </div>
-
-            </div>
-
-
-            <!-- =====================================================
-             VEHICLE INFORMATION
-             ===================================================== -->
-
-            <div class="card-body">
-
-                <div class="card-top">
-                    <span class="year-chip">{{ car["year"] }}</span>
-                    {% if car["body_type"] %}<span class="body-chip">{{ car["body_type"] }}</span>{% endif %}
-                </div>
-
-                <h3>
-                    <a href="{{ url_for('car_detail', car_id=car['id']) }}">{{ car["make"] }} {{ car["model"] }}</a>
-                </h3>
-
-                <div class="price">₦{{ "{:,}".format(car["price"]) }}</div>
-
-                <div class="spec-grid">
-                    <div class="spec"><small>Mileage</small><b>{% if car["mileage"] %}{{ car["mileage"] }} km{% else %}&mdash;{% endif %}</b></div>
-                    <div class="spec"><small>Gearbox</small><b>{{ car["transmission"] or "—" }}</b></div>
-                    <div class="spec"><small>Fuel</small><b>{{ car["fuel_type"] or "—" }}</b></div>
-                </div>
-
-                <!-- Description -->
-                {% if car["description"] %}
-
-                <p class="card-meta">
-                    {{ car["description"]|truncate(95, false, "…") }}
-                </p>
-
-                {% endif %}
-
-
-                <!-- =================================================
-                 VIEW DETAILS BUTTON
-                 ================================================= -->
-
-                <a href="{{ url_for('car_detail', car_id=car['id']) }}" class="view-details-btn">
-                    <span>View Details</span>
-                    <span class="view-details-arrow">→</span>
-                </a>
-
-            </div>
-
+    {% if cars %}
+    <div class="lux-stage">
+      {% for item in cars %}
+      {% set car = item.car %}
+      {% set photos = item.photos %}
+      {% set mi = car['mileage'] %}
+      {% set mi_text = (('{:,}'.format(mi) ~ ' km') if mi is number else mi) if mi else '' %}
+      <article class="lux-slide{% if loop.first %} active{% endif %}">
+        <a class="lux-img" href="/car/{{ car['id'] }}" aria-label="{{ car['year'] }} {{ car['make'] }} {{ car['model'] }}">
+          {% if photos %}<img src="{{ url_for('static', filename='uploads/' ~ photos[0]) }}" alt="{{ car['year'] }} {{ car['make'] }} {{ car['model'] }}"{% if not loop.first %} loading="lazy"{% endif %}>{% endif %}
+        </a>
+        <div class="lux-info">
+          <p class="lux-kicker">{{ car['condition'] or 'Available now' }} &middot; {{ car['year'] }}</p>
+          <h3 class="lux-name">{{ car['make'] }} {{ car['model'] }}</h3>
+          <div class="lux-rule"></div>
+          <div class="lux-price">&#8358;{{ "{:,}".format(car['price']) }}</div>
+          <div class="lux-specs">{% for v in [mi_text, car['transmission'], car['fuel_type']] if v %}<span>{{ v }}</span>{% endfor %}</div>
+          <div class="lux-actions">
+            <a class="lux-btn" href="/car/{{ car['id'] }}">View Details</a>
+            <a class="lux-btn ghost" target="_blank" rel="noopener" href="https://wa.me/{{ (whatsapp_number or '')|replace('+','')|replace(' ','') }}?text={{ ('I am interested in the ' ~ car['year'] ~ ' ' ~ car['make'] ~ ' ' ~ car['model'])|urlencode }}">WhatsApp</a>
+          </div>
         </div>
-
-        {% endfor %}
+      </article>
+      {% endfor %}
+      <button type="button" class="lux-arrow prev" aria-label="Previous car">&lsaquo;</button>
+      <button type="button" class="lux-arrow next" aria-label="Next car">&rsaquo;</button>
+      <div class="lux-count"><span class="lux-cur">01</span> / {{ '%02d'|format(cars|length) }}</div>
+      <div class="lux-bar"><i></i></div>
     </div>
 
-    <section id="services" class="services-section">
+    <div class="lux-thumbs">
+      {% for item in cars %}
+      {% set car = item.car %}
+      {% set photos = item.photos %}
+      <button type="button" class="lux-thumb{% if loop.first %} active{% endif %}" aria-label="Show {{ car['year'] }} {{ car['make'] }} {{ car['model'] }}">
+        {% if photos %}<img src="{{ url_for('static', filename='uploads/' ~ photos[0]) }}" alt="" loading="lazy">{% else %}<span class="lux-noimg"></span>{% endif %}
+        <span class="lux-cap"><strong>{{ car['year'] }} {{ car['make'] }} {{ car['model'] }}</strong><em>&#8358;{{ "{:,}".format(car['price']) }}</em></span>
+      </button>
+      {% endfor %}
+    </div>
+    <div class="lux-more"><a class="lux-btn ghost" href="{{ url_for('cars_page') }}">View all {{ total_cars }} cars &rarr;</a></div>
+    {% else %}
+    <p style="color:#8a8a93">New cars are arriving soon. Check back shortly.</p>
+    {% endif %}
+  </div>
+</section>
+
+<section id="services" class="services-section">
         <div class="section-label" style="padding:0 0 8px;">What We Offer</div>
         <h2 style="font-size:28px; font-weight:400; margin:0 auto 12px; max-width:600px; text-align:center;">A Complete
             Automotive Experience</h2>
@@ -363,11 +270,29 @@
         </div>
     </section>
 
-    <section id="testimonials" class="testi" style="display:none">
+    <section id="testimonials" class="testi">
   <div class="container">
     <p class="testi-eyebrow">Customer reviews</p>
     <h2 class="testi-title">What our customers say</h2>
+    <p class="testi-empty" style="display:none">No reviews yet. Be the first to share your experience.</p>
     <div class="testi-grid"></div>
+    <div class="testi-cta"><button type="button" class="testi-open">Write a review</button></div>
+    <form id="testiForm" class="testi-form" style="display:none" autocomplete="off">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="rating" value="5">
+      <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="tf-row">
+        <input type="text" name="name" placeholder="Your name" required maxlength="60">
+        <input type="text" name="detail" placeholder="Car you bought (optional)" maxlength="80">
+      </div>
+      <div class="tf-stars" aria-label="Rating">
+        <button type="button" class="tf-star" data-v="1">&#9733;</button><button type="button" class="tf-star" data-v="2">&#9733;</button><button type="button" class="tf-star" data-v="3">&#9733;</button><button type="button" class="tf-star" data-v="4">&#9733;</button><button type="button" class="tf-star" data-v="5">&#9733;</button>
+      </div>
+      <textarea name="quote" placeholder="Share your experience with us..." required minlength="10" maxlength="600"></textarea>
+      <label class="tf-photo"><span>Add your photo (optional)</span><input type="file" name="photo" accept="image/jpeg,image/png,image/webp"></label>
+      <div class="tf-prev"></div>
+      <div class="tf-foot"><button type="submit" class="tf-submit">Submit review</button><span class="tf-msg"></span></div>
+    </form>
   </div>
 </section>
 <section id="contact" class="contact-section">
@@ -701,8 +626,11 @@
 (function () {
   fetch('/testimonials.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (list) {
     var box = document.getElementById('testimonials');
-    if (!box || !list.length) return;
+    if (!box) return;
+    box.style.display = '';
+    if (!list.length) { var em = box.querySelector('.testi-empty'); if (em) em.style.display = ''; return; }
     var grid = box.querySelector('.testi-grid');
+    grid.innerHTML = '';
     list.forEach(function (t) {
       var c = document.createElement('div');
       c.className = 'testi-card';
@@ -714,15 +642,137 @@
       q.textContent = t.quote;
       var w = document.createElement('div');
       w.className = 'testi-who';
+      var av;
+      if (t.photo) {
+        av = document.createElement('img');
+        av.className = 'testi-ph';
+        av.alt = '';
+        av.loading = 'lazy';
+        av.src = '/static/' + t.photo;
+      } else {
+        av = document.createElement('div');
+        av.className = 'testi-av';
+        av.textContent = (t.name || '?').charAt(0).toUpperCase();
+      }
+      var meta = document.createElement('div');
+      meta.className = 'testi-meta';
       var n = document.createElement('strong');
       n.textContent = t.name;
-      w.appendChild(n);
-      if (t.detail) { var d = document.createElement('span'); d.textContent = t.detail; w.appendChild(d); }
+      meta.appendChild(n);
+      if (t.detail) { var d = document.createElement('span'); d.textContent = t.detail; meta.appendChild(d); }
+      if (t.date) {
+        var dt = new Date(String(t.date).replace(' ', 'T') + 'Z');
+        if (!isNaN(dt)) {
+          var ds = document.createElement('span');
+          ds.className = 'testi-date';
+          ds.textContent = dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+          meta.appendChild(ds);
+        }
+      }
+      w.appendChild(av); w.appendChild(meta);
       c.appendChild(s); c.appendChild(q); c.appendChild(w);
       grid.appendChild(c);
     });
-    box.style.display = '';
   }).catch(function () {});
+})();
+</script>
+
+<script id="testimonial-form-js">
+(function () {
+  var open = document.querySelector('.testi-open'), form = document.getElementById('testiForm');
+  if (!open || !form) return;
+  var rating = form.querySelector('input[name=rating]');
+  var stars = form.querySelectorAll('.tf-star');
+  var msg = form.querySelector('.tf-msg');
+  function paint(v) {
+    stars.forEach(function (s) { s.classList.toggle('on', Number(s.dataset.v) <= v); });
+    rating.value = v;
+  }
+  stars.forEach(function (s) { s.addEventListener('click', function () { paint(Number(s.dataset.v)); }); });
+  paint(5);
+  open.addEventListener('click', function () {
+    var hidden = form.style.display === 'none';
+    form.style.display = hidden ? '' : 'none';
+    if (hidden) form.querySelector('input[name=name]').focus();
+  });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    msg.textContent = 'Sending...';
+    msg.className = 'tf-msg';
+    fetch('/testimonials/submit', { method: 'POST', body: new FormData(form) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        msg.textContent = j.msg;
+        msg.className = 'tf-msg ' + (j.ok ? 'ok' : 'bad');
+        if (j.ok) { form.reset(); paint(5); if (j.live) setTimeout(function () { location.hash = '#testimonials'; location.reload(); }, 1200); }
+      })
+      .catch(function () { msg.textContent = 'Something went wrong. Please try again.'; msg.className = 'tf-msg bad'; });
+  });
+})();
+</script>
+
+<script id="testi-photo-js">
+(function () {
+  var form = document.getElementById('testiForm');
+  if (!form) return;
+  var f = form.querySelector('input[type=file]'), box = form.querySelector('.tf-prev');
+  if (!f || !box) return;
+  f.addEventListener('change', function () {
+    box.innerHTML = '';
+    var file = f.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { alert('That photo is too large (max 5 MB).'); f.value = ''; return; }
+    var img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    box.appendChild(img);
+  });
+  form.addEventListener('reset', function () { box.innerHTML = ''; });
+})();
+</script>
+
+<script id="lux-js">
+(function () {
+  var root = document.querySelector('.lux');
+  if (!root) return;
+  var stage = root.querySelector('.lux-stage');
+  if (!stage) return;
+  var slides = [].slice.call(root.querySelectorAll('.lux-slide'));
+  var thumbs = [].slice.call(root.querySelectorAll('.lux-thumb'));
+  var strip = root.querySelector('.lux-thumbs');
+  var bar = root.querySelector('.lux-bar i');
+  var cur = root.querySelector('.lux-cur');
+  var DELAY = 5500, i = 0, timer = null;
+  function show(n) {
+    i = (n + slides.length) % slides.length;
+    slides.forEach(function (s, k) { s.classList.toggle('active', k === i); });
+    thumbs.forEach(function (t, k) { t.classList.toggle('active', k === i); });
+    if (cur) cur.textContent = (i + 1 < 10 ? '0' : '') + (i + 1);
+    if (bar) { bar.style.animation = 'none'; void bar.offsetWidth; bar.style.animation = ''; }
+    var t = thumbs[i];
+    if (strip && t) strip.scrollTo({ left: Math.max(0, t.offsetLeft - 8), behavior: 'smooth' });
+  }
+  function stop() { clearInterval(timer); timer = null; }
+  function play() {
+    stop();
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    timer = setInterval(function () { if (!document.hidden) show(i + 1); }, DELAY);
+  }
+  root.querySelector('.lux-arrow.prev').addEventListener('click', function () { show(i - 1); play(); });
+  root.querySelector('.lux-arrow.next').addEventListener('click', function () { show(i + 1); play(); });
+  thumbs.forEach(function (t, k) { t.addEventListener('click', function () { show(k); play(); }); });
+  stage.addEventListener('mouseenter', stop);
+  stage.addEventListener('mouseleave', function () { show(i); play(); });
+  var x0 = null;
+  stage.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; stop(); }, { passive: true });
+  stage.addEventListener('touchend', function (e) {
+    if (x0 !== null) {
+      var dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 40) show(dx < 0 ? i + 1 : i - 1);
+    }
+    x0 = null; play();
+  }, { passive: true });
+  show(0);
+  play();
 })();
 </script>
 </body>

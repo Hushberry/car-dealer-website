@@ -159,23 +159,15 @@ def get_photos_for_car(car_id):
 
 @app.route("/")
 def home():
-    search = request.args.get("q")
-    make = request.args.get("make")
-    sort = request.args.get("sort", "newest")
-
-    cars = get_available_cars(search=search, min_price=None, max_price=None, sort=sort)
-
-    if make:
-        cars = [c for c in cars if c["make"] == make]
-
-    cars_with_photos = []
-    for car in cars:
-        photos = get_photos_for_car(car["id"])
-        cars_with_photos.append({"car": car, "photos": photos})
-
+    all_cars = get_available_cars(search=None, min_price=None, max_price=None, sort="newest")
+    total = len(all_cars)
+    featured = []
+    for car in all_cars[:8]:
+        featured.append({"car": car, "photos": get_photos_for_car(car["id"])})
     return render_template(
         "index.html",
-        cars=cars_with_photos,
+        cars=featured,
+        total_cars=total,
         makes=get_distinct_makes(),
         whatsapp_number=DEALER_WHATSAPP_NUMBER,
         phone_number=DEALER_PHONE_NUMBER,
@@ -185,6 +177,47 @@ def home():
         twitter=DEALER_TWITTER,
         gallery_photos=get_gallery_photos()
     )
+
+
+@app.route("/cars")
+def cars_page():
+    search = request.args.get("q")
+    make = request.args.get("make")
+    sort = request.args.get("sort", "newest")
+    lt = (request.args.get("listing_type") or "").strip().lower()
+
+    cars = get_available_cars(search=search, min_price=None, max_price=None, sort=sort)
+
+    if make:
+        cars = [c for c in cars if c["make"] == make]
+
+    if lt and cars:
+        try:
+            if "listing_type" in cars[0].keys():
+                chosen = [c for c in cars if str(c["listing_type"] or "").lower() == lt]
+                if chosen:
+                    cars = chosen
+        except Exception:
+            pass
+
+    cars_with_photos = []
+    for car in cars:
+        cars_with_photos.append({"car": car, "photos": get_photos_for_car(car["id"])})
+
+    return render_template(
+        "cars.html",
+        cars=cars_with_photos,
+        total_cars=len(cars_with_photos),
+        makes=get_distinct_makes(),
+        whatsapp_number=DEALER_WHATSAPP_NUMBER,
+        phone_number=DEALER_PHONE_NUMBER,
+        dealer_address=DEALER_ADDRESS,
+        instagram=DEALER_INSTAGRAM,
+        facebook=DEALER_FACEBOOK,
+        twitter=DEALER_TWITTER,
+        gallery_photos=get_gallery_photos()
+    )
+
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
@@ -1230,7 +1263,7 @@ ensure_testimonial_schema()
 def testimonials_json():
     conn = sqlite3.connect("database.db")
     conn.row_factory = sqlite3.Row
-    rows = conn.execute("SELECT name, detail, rating, quote FROM testimonials WHERE visible = 1 ORDER BY id DESC LIMIT 12").fetchall()
+    rows = conn.execute("SELECT name, detail, rating, quote, photo, created_at AS date FROM testimonials WHERE visible = 1 ORDER BY id DESC LIMIT 12").fetchall()
     conn.close()
     return jsonify([dict(r) for r in rows])
 
@@ -1241,7 +1274,7 @@ def admin_testimonials():
         return redirect(url_for("admin_login"))
     conn = sqlite3.connect("database.db")
     conn.row_factory = sqlite3.Row
-    rows = conn.execute("SELECT * FROM testimonials ORDER BY id DESC").fetchall()
+    rows = conn.execute("SELECT * FROM testimonials ORDER BY COALESCE(pending, 0) DESC, id DESC").fetchall()
     conn.close()
     return render_template("admin_testimonials.html", rows=rows)
 
@@ -1275,7 +1308,7 @@ def admin_testimonial_toggle(tid):
     if not session.get("admin_logged_in"):
         return redirect(url_for("admin_login"))
     conn = sqlite3.connect("database.db")
-    conn.execute("UPDATE testimonials SET visible = 1 - COALESCE(visible, 0) WHERE id = ?", (tid,))
+    conn.execute("UPDATE testimonials SET visible = 1 - COALESCE(visible, 0), pending = 0 WHERE id = ?", (tid,))
     conn.commit()
     conn.close()
     return redirect(url_for("admin_testimonials"))
@@ -1286,12 +1319,114 @@ def admin_testimonial_delete(tid):
     if not session.get("admin_logged_in"):
         return redirect(url_for("admin_login"))
     conn = sqlite3.connect("database.db")
+    _row = conn.execute("SELECT photo FROM testimonials WHERE id = ?", (tid,)).fetchone()
+    if _row and _row[0]:
+        try:
+            import os as _os
+            _os.remove(_os.path.join(app.root_path, "static", _row[0]))
+        except Exception:
+            pass
     conn.execute("DELETE FROM testimonials WHERE id = ?", (tid,))
     conn.commit()
     conn.close()
     flash("Testimonial deleted.")
     return redirect(url_for("admin_testimonials"))
 # ====================== END TESTIMONIALS ======================
+
+
+# ======================== PUBLIC TESTIMONIAL FORM ========================
+def ensure_testimonial_pending():
+    conn = sqlite3.connect("database.db")
+    cols = [r[1] for r in conn.execute("PRAGMA table_info(testimonials)")]
+    if "pending" not in cols:
+        conn.execute("ALTER TABLE testimonials ADD COLUMN pending INTEGER DEFAULT 0")
+    if "photo" not in cols:
+        conn.execute("ALTER TABLE testimonials ADD COLUMN photo TEXT")
+    conn.commit()
+    conn.close()
+
+
+ensure_testimonial_pending()
+_testi_hits = {}
+
+
+@app.context_processor
+def inject_pending_reviews():
+    n = 0
+    try:
+        if request.path.startswith("/admin"):
+            conn = sqlite3.connect("database.db")
+            n = conn.execute("SELECT COUNT(*) FROM testimonials WHERE COALESCE(pending,0) = 1").fetchone()[0]
+            conn.close()
+    except Exception:
+        n = 0
+    return {"pending_reviews": n}
+
+
+@app.route("/testimonials/submit", methods=["POST"])
+def submit_testimonial():
+    import os, uuid, io
+    ip = (request.headers.get("X-Forwarded-For", request.remote_addr or "") or "").split(",")[0].strip()
+    now = datetime.utcnow()
+    hits = [t for t in _testi_hits.get(ip, []) if (now - t).total_seconds() < 3600]
+    if len(hits) >= 3:
+        return jsonify(ok=False, msg="Too many submissions. Please try again later."), 429
+    if request.form.get("website"):
+        return jsonify(ok=True, msg="Thank you!")
+    name = request.form.get("name", "").strip()[:60]
+    detail = request.form.get("detail", "").strip()[:80]
+    quote = request.form.get("quote", "").strip()[:600]
+    try:
+        rating = max(1, min(5, int(request.form.get("rating", "5"))))
+    except ValueError:
+        rating = 5
+    if len(name) < 2 or len(quote) < 10:
+        return jsonify(ok=False, msg="Please enter your name and a review of at least 10 characters."), 400
+
+    photo_rel = None
+    f = request.files.get("photo")
+    if f and f.filename:
+        raw = f.read(5 * 1024 * 1024 + 1)
+        if len(raw) > 5 * 1024 * 1024:
+            return jsonify(ok=False, msg="Photo is too large (max 5 MB)."), 400
+        head = raw[:12]
+        is_jpg = head[:3] == b"\xff\xd8\xff"
+        is_png = head[:8] == b"\x89PNG\r\n\x1a\n"
+        is_webp = head[:4] == b"RIFF" and head[8:12] == b"WEBP"
+        if not (is_jpg or is_png or is_webp):
+            return jsonify(ok=False, msg="Please upload a JPG, PNG or WEBP photo."), 400
+        folder = os.path.join(app.root_path, "static", "uploads", "testimonials")
+        os.makedirs(folder, exist_ok=True)
+        fname = uuid.uuid4().hex + ".jpg"
+        try:
+            from PIL import Image, ImageOps
+            im = Image.open(io.BytesIO(raw))
+            im = ImageOps.exif_transpose(im).convert("RGB")
+            im.thumbnail((480, 480))
+            im.save(os.path.join(folder, fname), "JPEG", quality=85)
+        except ImportError:
+            ext = ".png" if is_png else (".webp" if is_webp else ".jpg")
+            fname = uuid.uuid4().hex + ext
+            with open(os.path.join(folder, fname), "wb") as out:
+                out.write(raw)
+        except Exception:
+            return jsonify(ok=False, msg="That photo could not be read. Please try another one."), 400
+        photo_rel = "uploads/testimonials/" + fname
+
+    auto = os.getenv("REVIEWS_AUTO_APPROVE", "0") == "1"
+    conn = sqlite3.connect("database.db")
+    conn.execute("INSERT INTO testimonials (name, detail, rating, quote, visible, pending, photo) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                 (name, detail, rating, quote, 1 if auto else 0, 0 if auto else 1, photo_rel))
+    conn.commit()
+    conn.close()
+    hits.append(now)
+    _testi_hits[ip] = hits
+    body = "Name: %s\nCar: %s\nRating: %s/5\nPhoto: %s\n\n%s\n\nApprove it in Admin > Testimonials." % (name, detail or "-", rating, "yes" if photo_rel else "no", quote)
+    threading.Thread(target=_send_email, args=("New testimonial to approve - %s" % BRAND_NAME, body), daemon=True).start()
+    if auto:
+        return jsonify(ok=True, live=True, msg="Thank you! Your review is now live.")
+    return jsonify(ok=True, live=False, msg="Thank you! Your review will appear once the dealer approves it.")
+# ====================== END PUBLIC TESTIMONIAL FORM ======================
 
 if __name__ == "__main__":
     app.run(debug=False)

@@ -19,3 +19,7 @@ database.db.bak
 *.bak6
 *.bak7
 database.db.bak*
+.env*
+*.bak*
+backup_templates/
+static/uploads/testimonials/
