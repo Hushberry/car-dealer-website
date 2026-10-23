@@ -2725,3 +2725,17 @@ html[data-theme="light"] .cp-map iframe{filter:none}
 /* Scroll-up fix */
 #backToTop,.backToTop,#backToTop *,.backToTop *{color:#0a0a0b !important;stroke:#0a0a0b !important}
 #backToTop,.backToTop{background:#c9a96e !important;border:1px solid #b8975a !important}
+
+/* Services cards v3 */
+.services-teaser .cc-inner{max-width:1160px !important;width:100%;padding-left:24px;padding-right:24px;box-sizing:border-box}
+.st-grid{gap:24px !important;margin:48px auto 44px !important}
+.st-card{padding:34px 28px !important;min-width:0}
+.st-card h3{font-size:19px !important;line-height:1.3;margin:0 0 12px !important}
+.st-card p{font-weight:400 !important;font-size:15px !important;line-height:1.75 !important}
+.st-sub{font-weight:400 !important}
+html[data-theme="light"] .st-card{background:#fff !important;border-color:#e6dfd0 !important;box-shadow:0 8px 26px rgba(20,16,8,.06)}
+html[data-theme="light"] .st-card:hover{border-color:#c9a96e !important;box-shadow:0 14px 34px rgba(20,16,8,.1)}
+html[data-theme="light"] .st-card p,html[data-theme="light"] .st-sub{color:#55555d !important}
+html[data-theme="light"] .st-ico{background:#f5ecda !important}
+@media (max-width:1100px){.st-grid{grid-template-columns:repeat(2,1fr) !important}}
+@media (max-width:600px){.st-grid{grid-template-columns:1fr !important}}
