@@ -32,3 +32,7 @@ html[data-theme="light"] .services-teaser .st-sub{color:#5a5a62}
   .hero-btns{gap:12px}
   .hero-trust{margin-top:38px;gap:10px 22px;justify-content:flex-start;padding-top:20px}
 }
+
+/* Page hero title size */
+.cp-hero h1{font-size:clamp(32px,4.4vw,54px) !important;line-height:1.12 !important;font-weight:500 !important}
+.cp-hero p{font-size:16.5px !important;line-height:1.75 !important;font-weight:400 !important}
