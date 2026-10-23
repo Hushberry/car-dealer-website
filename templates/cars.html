@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cars for Sale &mdash; {{ brand_name }}</title>
+    <title>Available Cars &mdash; {{ brand_name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
 
 <meta name="description" content="Buy, sell, swap and rent quality cars. Browse available vehicles online.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Cars for Sale - {{ brand_name }}">
+<meta property="og:title" content="Available Cars - {{ brand_name }}">
 <meta property="og:description" content="Browse quality cars, book a test drive, swap or sell yours - all with WhatsApp support.">
 <meta property="og:url" content="{{ request.url_root }}">
 <meta property="og:image" content="{{ url_for('static', filename='img/hero.jpg', _external=True, _scheme='https') }}">
@@ -31,7 +31,7 @@
     {% include '_nav.html' %}
 <div class="cars-hero">
   <p class="cars-eyebrow">Our inventory</p>
-  <h1>Cars for Sale</h1>
+  <h1>Available Cars</h1>
   <p class="cars-sub">Browse every car in stock. Use the filters to find your next car.</p>
 </div>
 <form method="GET" class="filters">
@@ -353,5 +353,20 @@
 })();
 </script>
 
+
+<script id="sticky-filter-js">
+/* pin the filter bar under the navbar while scrolling the list */
+window.addEventListener('load', function(){
+  var sel = document.querySelector('select[name="make"], input[name="q"]');
+  var form = sel && sel.closest('form');
+  if (!form) return;
+  var el = form;
+  while (el.parentElement && el.parentElement !== document.body &&
+         el.parentElement.offsetHeight < el.offsetHeight * 2.5) {
+    el = el.parentElement;
+  }
+  el.classList.add('filter-sticky');
+});
+</script>
 </body>
 </html>
